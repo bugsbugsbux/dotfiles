@@ -1,0 +1,34 @@
+set editing-mode vi
+
+# just visible bell
+set bell-style visible
+
+# color common part of completions
+#set colored-completion-prefix on
+
+# color completions according to their type
+set colored-stats on
+
+# unlimited history lines
+set history-size -1
+
+# add / to completed dirs
+set mark-directories on
+
+# first complete to common prefix on menu completions
+set menu-complete-display-prefix on
+
+# sort completions linewise instead of columnwise
+#set print-completions-horizontally on
+
+# undo all history changes on enter
+set revert-all-at-newline on
+
+# immediate completion-list if no partial completion possible
+set show-all-if-unmodified on
+
+# dont complete existing text on completion in middle of word
+set skip-completed-text on
+
+# file type indicator characters shown when competion runs
+set visible-stats on

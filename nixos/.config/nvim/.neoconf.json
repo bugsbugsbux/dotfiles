@@ -1,0 +1,18 @@
+// This IS the GLOBAL neoconf settings file
+
+// Don't forget other additional config files such as
+// * local .neoconf.json files
+// * .vscode/settings.json files
+// * or .editorconfig files
+
+{
+    "lspconfig": {
+        "lua_ls": {
+            "Lua": {
+                "diagnostics": {
+                    "globals": ["vim"] // disables undefined-global 'vim' error
+                }
+            }
+        }
+    }
+}

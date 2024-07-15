@@ -1,0 +1,19 @@
+// This is the LOCAL neoconf settings file for the 'user' module,
+// NOT the global neoconf settings file ~/.config/nvim/neoconf.json
+
+// Don't forget the additional other config files
+// * .editorconfig
+// * .vscode/settings.json
+// * require'user.core.lsp'
+
+{
+    "lspconfig": {
+        "lua_ls": {
+            "Lua": {
+                "diagnostics": {
+                    "globals": ["vim"]
+                }
+            }
+        }
+    }
+}

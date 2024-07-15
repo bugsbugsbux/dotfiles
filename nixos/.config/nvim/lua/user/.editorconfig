@@ -1,0 +1,12 @@
+# Note: this is project-local!
+# tab_width sets 'tabstop'
+# indent_size sets 'softtabstop' and 'shiftwidth'
+
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = tab
+
+[*.lua]
+tab_width = 4
+max_line_length = 88

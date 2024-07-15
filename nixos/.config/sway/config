@@ -1,0 +1,259 @@
+# search for "requires" to list dependencies
+
+include /etc/sway/config.d/*
+
+set $alt   Mod1
+set $super Mod4
+set $mod   $super
+
+# exit sway
+bindsym Control+Alt+Delete exit
+# close window
+bindsym $mod+Backspace kill
+bindsym $mod+Escape    kill
+# fullscreen
+bindsym $mod+f fullscreen
+
+set $left  h
+set $down  j
+set $up    k
+set $right l
+
+# focus window
+bindsym $mod+$left  focus left
+bindsym $mod+Left   focus left
+bindsym $mod+$right focus right
+bindsym $mod+Right  focus right
+bindsym $mod+$up    focus up
+bindsym $mod+Up     focus up
+bindsym $mod+$down  focus down
+bindsym $mod+Down   focus down
+
+# focus workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# move floating window
+bindsym $mod+Shift+$left  move left  50 px
+bindsym $mod+Shift+Left   move left  50 px
+bindsym $mod+Shift+$right move right 50 px
+bindsym $mod+Shift+Right  move right 50 px
+bindsym $mod+Shift+$up    move up    50 px
+bindsym $mod+Shift+Up     move up    50 px
+bindsym $mod+Shift+$down  move down  50 px
+bindsym $mod+Shift+Down   move down  50 px
+
+# move window to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# sticky windows (stay on active workspace, floating)
+bindsym $mod+Plus sticky toggle
+
+# Windows may have an association to "scratchpad". This turns them into
+# floating windows of which only one can be shown at a time.
+# move window to scratchpad
+bindsym $mod+Shift+minus move scratchpad
+# toggle showing and cycle through scratch-windows
+# (prefers focusing visible scratch-window)
+bindsym $mod+Tab scratchpad show
+
+# floating windows
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+mode "resize" {
+    bindsym Escape mode "default"
+    bindsym $left  resize shrink width  20px
+    bindsym Left   resize shrink width  20px
+    bindsym $right resize grow   width  20px
+    bindsym Right  resize grow   width  20px
+    bindsym $up    resize grow   height 20px
+    bindsym Up     resize shrink height 20px
+    bindsym $down  resize shrink height 20px
+    bindsym Down   resize grow   height 20px
+}
+bindsym $mod+r mode "resize"
+
+# layout
+# default split direction
+bindsym $mod+b       splitv
+bindsym $mod+Shift+b splith
+mode "layout" {
+    bindsym Escape mode "default"
+    bindsym 0 layout default,  mode "default"
+    bindsym 1 layout splith,   mode "default"
+    bindsym 2 layout splitv,   mode "default"
+    bindsym 3 layout tabbed,   mode "default"
+    bindsym 4 layout stacking, mode "default"
+    # focus parent container
+    bindsym p focus parent,    mode "default"
+    # cycle through layouts
+    bindsym Tab       layout toggle splith    tabbed  splitv  stacking
+    bindsym Shift+Tab layout toggle stacking  splitv  tabbed  splith
+}
+bindsym $mod+w mode "layout"
+
+# mouse, touchpad behaviour
+focus_follows_mouse yes
+# move window with $mod+leftbutton, resize with $mod+rightbutton
+# to switch that use: inverse
+floating_modifier $mod normal
+input type:touchpad {
+    tap enabled
+    natural_scroll enabled
+    pointer_accel 0.25
+    accel_profile flat
+}
+#input * scroll_factor 1.0
+
+# keyboards (show with: swaymsg -t get_inputs)
+input type:keyboard {
+    xkb_layout "de"
+    xkb_options caps:escape,shift:both_capslock
+}
+# my laptop keyboard
+#input "1:1:AT_Translated_Set_2_keyboard" { }
+# my wifi keyboard
+#input "1133:16387:Logitech_K270" { }
+# my raspberry-pi keyboard
+#input "1241:6:RPI_Wired_Keyboard_5" { }
+
+# outputs
+# laptop
+output eDP-1 scale 1.2
+# name as make+model+serial (show with: swaymsg -t get_outputs)
+# my external monitor via hdmi
+output "Messeltronik Dresden GmbH MD20529 0x00000101" {
+    transform 90
+}
+# my external monitor via vga
+output "Messeltronik Dresden GmbH MD20529 V520LSD00649" {
+    transform 90
+}
+
+# looks (requires noto font)
+font "Noto Sans Mono 12"
+default_border pixel 2
+titlebar_padding 7 1
+seat * xcursor_theme default 25
+# wallpaper (requires swaybg)
+output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+# notifications
+exec mako
+
+# status bar (requires jq, acpi, fonts: noto mono + noto emoji, wireplumber, networkmanager)
+bar {
+    position top
+    font "Noto Sans Mono"
+    colors {
+        statusline #ffffff
+        background #000000
+    }
+
+    # When the status_command prints a new line to stdout, swaybar updates.
+    status_command while true; do \
+        echo "\
+            \[$(swaymsg -t get_tree | jq -r '..|select(.focused?).name' || echo '')\] \
+            $( \
+                [[ $(acpi -V | grep Adapter ) = *"off-line"* ]] && printf '🔋BAT -' || printf '⚡POW '; \
+                echo $(acpi -b | cut -f2 -d ',' | grep -v -e '^ 0%') \
+            ) \| $( \
+                [[ $(wpctl get-volume @DEFAULT_AUDIO_SINK@ | cut -d' ' -f3) = *"[MUTED]"* ]] && printf '🔇 ' || printf '🔊 '; \
+                echo $(wpctl get-volume @DEFAULT_AUDIO_SINK@ | cut -d' ' -f2) \
+            ) \| 🎹 $( \
+                swaymsg -t get_inputs | grep active_layout_name | grep -v null | sort -u | cut -d'\"' -f4 \
+            )  \| CON $(nmcli network connectivity) \
+            \| 📆 $( \
+                date +'%Y-%m-%d %a | ⏰ %H:%M:%S %p' \
+            )"; \
+        sleep 1; \
+    done
+}
+
+# fix x11/xorg (requires xorg-xhost)
+exec xhost local:
+
+# terminal (requires:)
+set $foot               "foot fish --login"
+set $foot_tmux          "foot tmux -u"
+set $gnometerminal      "gnome-terminal -- fish --login"
+set $gnometerminal_tmux "gnome-terminal -- tmux -u"
+set $alacritty          "alacritty --command fish --login"
+set $alacritty_tmux     "alacritty --command tmux -u"
+set $wezterm            "wezterm start -- fish --login"
+set $wezterm_tmux       "wezterm start -- tmux -u"
+#
+set $term $foot
+set $tmux_term $foot_tmux
+bindsym $mod+Return exec $tmux_term
+bindsym $mod+Shift+Return exec $term
+# in case one does not have two hands available:
+bindsym $mod+t exec $tmux_term
+bindsym $mod+Shift+t exec $term
+
+# launcher (requires tofi, [compgen is a bash builtin])
+set $launcher compgen -c | tofi-run | xargs swaymsg exec --
+bindsym $mod+o exec $launcher
+
+# browser (requires:)
+set $chromium chromium
+set $firefox firefox
+#
+set $browser $chromium
+bindsym $mod+i exec LC_ALL="de_DE.UTF-8" $browser
+
+# files (requires nautilus)
+bindsym $mod+Shift+o exec LC_ALL="de_DE.UTF-8" nautilus
+
+# audio (requires wireplumber)
+bindsym --locked XF86AudioMute        exec wpctl set-mute   @DEFAULT_AUDIO_SINK@ toggle
+bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-
+bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+
+
+# microphone (requires wireplumber)
+bindsym --locked XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+
+# brightness (requires brightnessctl)
+bindsym --locked XF86MonBrightnessDown exec brightnessctl set 25-
+bindsym --locked XF86MonBrightnessUp   exec brightnessctl set +25
+
+# screenshot (requires grim, slurp, libnotify)
+bindsym Print exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') "$HOME"/Downloads/screenshot_$(date +"%Y%m%d-%H%M%S.png") && notify-send "grim: ok" -t 500
+bindsym Shift+Print exec grim -g "$(slurp)" "$HOME"/Downloads/screensection_$(date +"%Y%M%d-%H%M%S.png")
+
+# determine color (requires grim, slurp, libnotify, imagemagick)
+bindsym $mod+c exec notify-send "color is:" "$(grim -g "$(slurp -p)" -t ppm - | convert - -format '%[pixel:p{0,0}]' txt:- | tail -1 | cut -d ' ' -f 2-)"
+
+# bluetooth
+# disable by default (requires tlp)
+exec bluetooth off
+# activate systray icon (requires blueman)
+exec blueman-applet
+
+# qemu
+for_window [title="^QEMU .*"] border none
+
+# J data vizualisation windows shall float:
+# … from JQt
+for_window [title="^Plot$"] floating enable
+for_window [title="^viewmat$"] floating enable
+# … from ijconsole
+for_window [title="^plot.pdf — Plot$"] floating enable
+for_window [title="^viewmat.png$"] floating enable
+
