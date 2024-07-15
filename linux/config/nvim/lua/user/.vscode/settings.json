@@ -1,0 +1,11 @@
+// Note: this is project-local!
+// Don't forget the other config files such as .neoconf.json
+// or vim.fn.stdpath('config')..user/pconf_lsp.lua
+{
+    "Lua": {
+        "diagnostics.disable": [
+            "deprecated",
+            "lowercase-global"
+        ]
+    }
+}

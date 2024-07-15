@@ -1,0 +1,28 @@
+# for more options see `man 5 mako`
+# reload config with `makoctl reload`
+
+# LAST LINE MATCHING WINS
+
+# other NOTES:
+# colors: start with hash #rrggbb
+#   specify opacity: #rrggbbaa you can compute the
+#   aa value by taking the wanted percents of 255 (=FF)
+#   eg: 50% = 255/100*50 = 127.499 => int(127.49)=127
+#     => hex(127) = 7f; prepend 0 if necessary
+
+# general values
+default-timeout=10000
+font="Noto Sans Monospace 20"
+width=400
+border-color=#ffff00
+border-radius=10
+padding=10
+progress-color=over #00ffff
+anchor=top-center
+
+# specific values, make sure that less specific comes first
+
+# spotify notifications should not be very noticeable
+[app-name=Spotify]
+background-color=#ffffff0d
+border-size=0

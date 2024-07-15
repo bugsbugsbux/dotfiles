@@ -1,0 +1,72 @@
+[user]
+	name = Leopold Perné
+	email = herrvonvoid@gmx.net
+[core]
+	editor = nvim
+[init]
+	defaultBranch = master
+###
+[pull]
+	rebase = false
+[push]
+	default = current
+###
+[pager]
+	log =  /usr/share/git/diff-highlight/diff-highlight | less
+	show = /usr/share/git/diff-highlight/diff-highlight | less
+	diff = /usr/share/git/diff-highlight/diff-highlight | less
+###
+[diff]
+	tool = nvim
+	# algorithm = minimal  # use this instead of default meyers
+	algorithm = histogram  # this is in most cases easiest to read imho
+[difftool "nvim"]
+	cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
+###
+[merge]
+	tool = diffconflicts
+[mergetool "nvim"]
+	# REQUIRES tpope/vim-fugitive
+	cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
+[mergetool "diffconflicts"]
+	# REQUIRES whiteinge/diffconflicts
+	cmd = nvim -c DiffConflicts \"$MERGED\" \"$BASE\" \"$LOCAL\" \"$REMOTE\"
+	trustExitCode = true  # abort with :cq (exits with error statuscode)
+	keepBackup = false
+###
+[alias]
+	a = add
+	ad = add -p
+	co = checkout
+	com = commit
+	d = diff --color-moved=zebra
+	di = diff --color-moved=zebra --cached
+	dl = diff --color-moved=zebra .
+	disc = restore  #<file>  # discard changes in working dir
+	dt = difftool
+	dti = difftool --cached
+	fhistza = log --patch --follow  # history of <file> last change first
+	fhistaz = log --reverse --patch --follow  # history of <file> first change first
+	l  = log --oneline --graph --decorate --all -20
+	lmsg = log --all --grep  # search (all) commit-messages for <pattern>
+	# To locate the correct HEAD result we grep for the one preceded by an ansi-escape (which end in 'm'):
+	lo = !"git log --oneline --graph --decorate --all --color=always | grep --color=never mHEAD -C10" #<customize grep opts>
+	lomsg = log --grep  # search branch's commit-messages for <pattern>
+	nch = log --patch -wM -S  # commits which change occurrences of <str>
+	nch-rex = log --patch -wM --pickaxe-regex -S  # nch but with <regex>
+	rex = log --patch -wM -G  # commits whose diff contains <pattern>
+	s  = status -sb
+	serve = daemon \
+		--reuseaddr \
+		--verbose \
+		--base-path=. \
+		--export-all ./.git
+	si  = status -sb --ignored
+	sl  = status -sb .
+	sli  = status -sb --ignored .
+	unstage = restore --staged  #<file>  # unstage
+###
+[credential "https://github.com"]
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = !gh auth git-credential

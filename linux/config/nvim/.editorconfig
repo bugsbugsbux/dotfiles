@@ -1,0 +1,6 @@
+root = true
+charset = utf-8
+# handles 'sw' and 'sts':
+indent_size = tab
+# handles 'ts':
+#tab_width = 4

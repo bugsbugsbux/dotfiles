@@ -1,0 +1,38 @@
+# Theme-name: Campbell
+colors:
+  # Default colors
+  primary:
+    background: '#0c0c0c'
+    foreground: '#cccccc'
+
+  # Normal colors
+  normal:
+    black: '#0c0c0c'
+    blue: '#0037da'
+    cyan: '#3a96dd'
+    green: '#13a10e'
+    magenta: '#881798'
+    red: '#c50f1f'
+    white: '#cccccc'
+    yellow: '#c19c00'
+
+  # Bright colors
+  bright:
+    black:   '#767676'
+    blue:    '#3b78ff'
+    cyan:    '#61d6d6'
+    green:   '#16c60c'
+    magenta: '#b4009e'
+    red:     '#e74856'
+    white:   '#f2f2f2'
+    yellow:  '#f9f1a5'
+
+# Selected text:
+  selection:
+    background: '#ffffff'
+
+####################### not in spec
+  # Cursor colors
+  cursor:
+   text: '#000000'
+   cursor: '#ffffff'
