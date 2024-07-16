@@ -53,6 +53,7 @@ pushd ~/.dot
     git clone "$BARE" shell && {
     pushd shell
         git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/{.bashrc,.bash_profile,.bash_aliases,.inputrc}
+        git checkout -b dev
         linkstall {$PLATFORM,~}/.bashrc
         linkstall {$PLATFORM,~}/.bash_profile
         linkstall {$PLATFORM,~}/.bash_aliases
@@ -61,11 +62,13 @@ pushd ~/.dot
     git clone "$BARE" fish && {
     pushd fish
         git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/fish
+        git checkout -b dev
         linkstall {$PLATFORM,~}/.config/fish
     popd; }
     git clone "$BARE" sway && {
     pushd sway
         git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{mako,sway,tofi}
+        git checkout -b dev
         linkstall {$PLATFORM,~}/.config/mako
         linkstall {$PLATFORM,~}/.config/sway
         linkstall {$PLATFORM,~}/.config/tofi
@@ -73,6 +76,7 @@ pushd ~/.dot
     git clone "$BARE" term && {
     pushd term
         git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{alacritty,foot,wezterm}
+        git checkout -b dev
         linkstall {$PLATFORM,~}/.config/alacritty
         linkstall {$PLATFORM,~}/.config/foot
         linkstall {$PLATFORM,~}/.config/wezterm
@@ -80,12 +84,14 @@ pushd ~/.dot
     git clone "$BARE" nvim && {
     pushd nvim
         git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/nvim
+        git checkout -b dev
         linkstall {$PLATFORM,~}/.config/nvim
     popd; }
     git clone "$BARE" other && {
     pushd other
         git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{git,tmux,wireplumber}
         git sparse-checkout add /{linux,nixos,termux,windows}/{.npmrc,.config/chromium-flags.conf}
+        git checkout -b dev
         linkstall {$PLATFORM,~}/.npmrc
         linkstall {$PLATFORM,~}/.config/git
         linkstall {$PLATFORM,~}/.config/tmux
