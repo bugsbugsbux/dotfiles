@@ -52,7 +52,7 @@ popd
 pushd ~/.dot
     git clone "$BARE" shell && {
     pushd shell
-        git sparse-checkout set --no-cone /$PLATFORM/{.bashrc,.bash_profile,.bash_aliases,.inputrc}
+        git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/{.bashrc,.bash_profile,.bash_aliases,.inputrc}
         linkstall {$PLATFORM,~}/.bashrc
         linkstall {$PLATFORM,~}/.bash_profile
         linkstall {$PLATFORM,~}/.bash_aliases
@@ -60,32 +60,32 @@ pushd ~/.dot
     popd; }
     git clone "$BARE" fish && {
     pushd fish
-        git sparse-checkout set --no-cone $PLATFORM/.config/fish
+        git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/fish
         linkstall {$PLATFORM,~}/.config/fish
     popd; }
     git clone "$BARE" sway && {
     pushd sway
-        git sparse-checkout set --no-cone $PLATFORM/.config/{mako,sway,tofi}
+        git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{mako,sway,tofi}
         linkstall {$PLATFORM,~}/.config/mako
         linkstall {$PLATFORM,~}/.config/sway
         linkstall {$PLATFORM,~}/.config/tofi
     popd; }
     git clone "$BARE" term && {
     pushd term
-        git sparse-checkout set --no-cone $PLATFORM/.config/{alacritty,foot,wezterm}
+        git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{alacritty,foot,wezterm}
         linkstall {$PLATFORM,~}/.config/alacritty
         linkstall {$PLATFORM,~}/.config/foot
         linkstall {$PLATFORM,~}/.config/wezterm
     popd; }
     git clone "$BARE" nvim && {
     pushd nvim
-        git sparse-checkout set --no-cone $PLATFORM/.config/nvim
+        git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/nvim
         linkstall {$PLATFORM,~}/.config/nvim
     popd; }
     git clone "$BARE" other && {
     pushd other
-        git sparse-checkout set --no-cone $PLATFORM/.config/{git,tmux,wireplumber}
-        git sparse-checkout add /$PLATFORM/{.npmrc,.config/chromium-flags.conf}
+        git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{git,tmux,wireplumber}
+        git sparse-checkout add /{linux,nixos,termux,windows}/{.npmrc,.config/chromium-flags.conf}
         linkstall {$PLATFORM,~}/.npmrc
         linkstall {$PLATFORM,~}/.config/git
         linkstall {$PLATFORM,~}/.config/tmux
