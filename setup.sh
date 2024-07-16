@@ -45,53 +45,53 @@ mkdir -p ~/.config ~/.dot ~/repos
 
 # create bare clone
 pushd ~/repos
-    git clone --bare --no-local "$BARE_SRC" "$BARE" || exit $ERR_GENERIC
+    git clone --quiet --bare --no-local "$BARE_SRC" "$BARE" || exit $ERR_GENERIC
 popd
 
 # create sparse clones and link to them
 pushd ~/.dot
-    git clone "$BARE" shell && {
+    git clone --quiet "$BARE" shell && {
     pushd shell
         git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/{.bashrc,.bash_profile,.bash_aliases,.inputrc}
-        git checkout -b dev
+        git checkout --quiet -b dev
         linkstall {$PLATFORM,~}/.bashrc
         linkstall {$PLATFORM,~}/.bash_profile
         linkstall {$PLATFORM,~}/.bash_aliases
         linkstall {$PLATFORM,~}/.inputrc
     popd; }
-    git clone "$BARE" fish && {
+    git clone --quiet "$BARE" fish && {
     pushd fish
         git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/fish
-        git checkout -b dev
+        git checkout --quiet -b dev
         linkstall {$PLATFORM,~}/.config/fish
     popd; }
-    git clone "$BARE" sway && {
+    git clone --quiet "$BARE" sway && {
     pushd sway
         git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{mako,sway,tofi}
-        git checkout -b dev
+        git checkout --quiet -b dev
         linkstall {$PLATFORM,~}/.config/mako
         linkstall {$PLATFORM,~}/.config/sway
         linkstall {$PLATFORM,~}/.config/tofi
     popd; }
-    git clone "$BARE" term && {
+    git clone --quiet "$BARE" term && {
     pushd term
         git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{alacritty,foot,wezterm}
-        git checkout -b dev
+        git checkout --quiet -b dev
         linkstall {$PLATFORM,~}/.config/alacritty
         linkstall {$PLATFORM,~}/.config/foot
         linkstall {$PLATFORM,~}/.config/wezterm
     popd; }
-    git clone "$BARE" nvim && {
+    git clone --quiet "$BARE" nvim && {
     pushd nvim
         git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/nvim
-        git checkout -b dev
+        git checkout --quiet -b dev
         linkstall {$PLATFORM,~}/.config/nvim
     popd; }
-    git clone "$BARE" other && {
+    git clone --quiet "$BARE" other && {
     pushd other
         git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{git,tmux,wireplumber}
         git sparse-checkout add /{linux,nixos,termux,windows}/{.npmrc,.config/chromium-flags.conf}
-        git checkout -b dev
+        git checkout --quiet -b dev
         linkstall {$PLATFORM,~}/.npmrc
         linkstall {$PLATFORM,~}/.config/git
         linkstall {$PLATFORM,~}/.config/tmux
