@@ -2,7 +2,7 @@
 
 include /etc/sway/config.d/*
 
-exec systemctl --user import-environment PATH && systemctl --user restart xdg-desktop-portal.service
+exec systemctl --user import-environment PATH ; systemctl --user restart xdg-desktop-portal.service
 
 set $alt   Mod1
 set $super Mod4
