@@ -24,7 +24,7 @@ pushd () { command pushd "$@"; } >/dev/null
 popd ()  { command popd  "$@"; } >/dev/null
 
 # throw if prerequisites aren't met
-if [[ "$USER" == "root" ]]; then
+if (( "$UID" == 0 )); then
     echo ERROR: must not run as root! >&2
     exit $ERR_EXISTING_FILES
 fi
