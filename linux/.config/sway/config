@@ -190,13 +190,13 @@ bar {
 exec xhost local:
 
 # terminal (requires:)
-set $foot               "foot fish --login"
+set $foot               "foot"
 set $foot_tmux          "foot tmux -u"
-set $gnometerminal      "gnome-terminal -- fish --login"
+set $gnometerminal      "gnome-terminal"
 set $gnometerminal_tmux "gnome-terminal -- tmux -u"
-set $alacritty          "alacritty --command fish --login"
+set $alacritty          "alacritty"
 set $alacritty_tmux     "alacritty --command tmux -u"
-set $wezterm            "wezterm start -- fish --login"
+set $wezterm            "wezterm start"
 set $wezterm_tmux       "wezterm start -- tmux -u"
 #
 set $term $foot
