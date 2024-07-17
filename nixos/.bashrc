@@ -1,6 +1,8 @@
 # don't do anything when not interactive
 [[ $- != *i* ]] && return
 
+test -e ~/.bash_aliases && source ~/.bash_aliases
+
 # unlimited history
 HISTSIZE=-1
 HISTFILESIZE=-1
