@@ -25,7 +25,7 @@
 ###
 [merge]
 	tool = diffconflicts
-[mergetool "nvim"]
+[mergetool "fugitive"]
 	# REQUIRES tpope/vim-fugitive
 	cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
 [mergetool "diffconflicts"]
