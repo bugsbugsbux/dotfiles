@@ -52,12 +52,15 @@ popd
 pushd ~/.dot
     git clone --quiet "$BARE" shell && {
     pushd shell
-        git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/{.bashrc,.bash_profile,.bash_aliases,.inputrc}
+        git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/{.{bash,input}rc,.{,bash_}profile,.bash_{login,logout,aliases}}
         git checkout --quiet -b dev
         linkstall {$PLATFORM,~}/.bashrc
-        linkstall {$PLATFORM,~}/.bash_profile
-        linkstall {$PLATFORM,~}/.bash_aliases
         linkstall {$PLATFORM,~}/.inputrc
+        # linkstall {$PLATFORM,~}/.profile
+        linkstall {$PLATFORM,~}/.bash_profile
+        # linkstall {$PLATFORM,~}/.bash_login
+        # linkstall {$PLATFORM,~}/.bash_logout
+        linkstall {$PLATFORM,~}/.bash_aliases
     popd; }
     git clone --quiet "$BARE" fish && {
     pushd fish
