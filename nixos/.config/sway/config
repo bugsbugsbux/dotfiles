@@ -153,7 +153,7 @@ default_border pixel 2
 titlebar_padding 7 1
 seat * xcursor_theme default 25
 # wallpaper (requires swaybg)
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg /run/current-system/sw/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 # notifications
 exec mako
 
