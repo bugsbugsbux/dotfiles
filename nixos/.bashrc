@@ -11,6 +11,6 @@ shopt -s histappend
 PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
 
 # \w is $PWD with $HOME as ~
-PS1='\w ($PIPESTATUS)> '
+PS1='\w ($?)> '
 
 set -o vi       # not needed if set in ~/.inputrc
