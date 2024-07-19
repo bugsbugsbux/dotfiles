@@ -182,6 +182,7 @@ in {
     ];
 
     environment.pathsToLink = [
+        "/share/git"
         "/share/foot/themes"
     ];
 
