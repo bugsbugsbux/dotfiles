@@ -72,16 +72,32 @@ in {
     fonts = let
         monego-font = pkgs.callPackage ./monego-font {};
     in {
-        enableDefaultPackages = true;
+        enableDefaultPackages = true; # has noto-fonts-color-emoji -> monochrome cannot be preferred
         packages = with pkgs; [
+            noto-fonts
+            noto-fonts-cjk
+            noto-fonts-color-emoji      # already included when fonts.enableDefaultPackages=true
+            noto-fonts-monochrome-emoji # monochrome emojis CANNOT take precedence over colored ones
+
+            # windows fonts
+            corefonts
+            vistafonts
+
             # custom fonts:
             monego-font
         ];
         fontconfig = {
             defaultFonts = {
-                monospace = ["Monego"];
+                monospace = ["Monego" "Noto Sans Mono"];
+                serif = ["Noto Serif"];
+                sansSerif = ["Noto Sans"];
+
+                # NOTE: fontconfig always prefers ANY color emoji font over ANY monochrome emoji
+                # font; thus setting "Noto Emoji" (is monochrome) to be preferred, does not work!
+                #emoji = ["Apple Color Emoji" "Noto Color Emoji"];
             };
         };
+        fontDir.enable = true;
     };
 
     # sound via pipewire:
