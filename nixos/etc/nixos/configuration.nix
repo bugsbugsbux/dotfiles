@@ -40,7 +40,7 @@ in {
 
     boot.tmp.cleanOnBoot = true;    # clear /tmp on startup
 
-    console.keyMap = "de-latin1-nodeadkeys";
+    console.keyMap = "de-latin1";
 
     time.timeZone = "Europe/Berlin";
 
