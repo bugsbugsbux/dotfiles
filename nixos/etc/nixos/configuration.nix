@@ -169,8 +169,16 @@ in {
         wget                        # download files
         xdg-utils                   # open files appropriately
 
-        # # apps:
+        # apps:
         chromium                    # web browser
+        evince                      # pdf viewer
+        gedit                       # graphical file editor
+        gnome.cheese                # webcam
+        gnome.gnome-terminal        # my favorite terminal
+        gnome.nautilus              # graphical file manager
+        gnome.simple-scan           # scanner
+        libreoffice-fresh           # document suite
+        mpv                         # music,video player
     ];
 
     environment.pathsToLink = [
