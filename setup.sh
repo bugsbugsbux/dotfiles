@@ -48,8 +48,18 @@ pushd ~/repos
     git clone --quiet --bare --no-local "$BARE_SRC" "$BARE" || exit $ERR_GENERIC
 popd
 
-# create sparse clones and link to them
+# create sparse clones (and link to them)
 pushd ~/.dot
+    git clone --quiet "$BARE" etc && {
+    pushd etc
+        git sparse-checkout set --no-cone {linux,nixos,termux,windows}/etc
+        git checkout --quiet -b dev
+        echo "PLEASE manually install files from '$PWD/$PLATFORM/etc/…' to '/etc/…'"
+        # on nixos put a link to the local nixos configuration folder into HOME:
+        if [[ "$PLATFORM" == "nixos" ]]; then
+            linkstall "${PLATFORM}/etc/nixos" ~/nixos
+        fi
+    popd; }
     git clone --quiet "$BARE" shell && {
     pushd shell
         git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/{.{bash,input}rc,.{,bash_}profile,.bash_{login,logout,aliases}}
