@@ -1,0 +1,6 @@
+3,4c3,4
+< let HOSTNAME = null;
+<     FIRST_INSTALL = null;
+---
+> let HOSTNAME = "tpe14gen3";
+>     FIRST_INSTALL = "24.05";

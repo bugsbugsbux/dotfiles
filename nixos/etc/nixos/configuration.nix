@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
-let HOSTNAME = "tpe14g3";
-    FIRST_INSTALL = "23.11";
+let HOSTNAME = null;
+    FIRST_INSTALL = null;
 in {
     #
     # other config parts:
