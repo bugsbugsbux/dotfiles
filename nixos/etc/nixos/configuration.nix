@@ -151,6 +151,12 @@ in {
         xwayland.enable = true;
         wrapperFeatures.gtk = true; # sets appropriate env-vars for GTK stuff
         extraSessionCommands = ''
+        # fix: `amdgpu: amdgpu_cs_ctx_create2 failed. (-13)`
+        if [[ "$(hostname)" == "tpe14gen3" ]]; then
+            export WLR_RENDERER='' + "\"\${WLR_RENDERER:-vulkan}\";" + ''
+
+        fi
+
         # once sway started we know, that truecolor support is possible, which it is
         # not in the tty, and thus this var is here and not in environment.variables
         export COLORTERM=truecolor
