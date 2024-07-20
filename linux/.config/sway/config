@@ -241,8 +241,8 @@ bindsym Shift+Print exec grim -g "$(slurp)" "$HOME"/Downloads/screensection_$(da
 bindsym $mod+c exec notify-send "color is:" "$(grim -g "$(slurp -p)" -t ppm - | convert - -format '%[pixel:p{0,0}]' txt:- | tail -1 | cut -d ' ' -f 2-)"
 
 # bluetooth
-# disable by default (requires tlp)
-exec bluetooth off
+# disable by default (requires bluez)
+exec bluetoothctl power off
 # activate systray icon (requires blueman)
 exec blueman-applet
 
