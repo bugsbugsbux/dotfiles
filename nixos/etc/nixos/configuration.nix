@@ -208,6 +208,7 @@ in {
             gh                      # access to github accouts
         glib                        # provides `gio`
         htop                        # process monitor
+        killall                     # kill processes by name
         neovim                      # editor
         nix-prefetch                # determine hash for FODs
         tree                        # show nested folder structures
