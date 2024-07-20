@@ -148,6 +148,37 @@ in {
             # etc
             pulsemixer              # graphically adjust volume
         ];
+        xwayland.enable = true;
+        wrapperFeatures.gtk = true; # sets appropriate env-vars for GTK stuff
+        extraSessionCommands = ''
+        # once sway started we know, that truecolor support is possible, which it is
+        # not in the tty, and thus this var is here and not in environment.variables
+        export COLORTERM=truecolor
+
+        # for the following variables see:
+        # https://gitlab.freedesktop.org/wlroots/wlroots/-/blob/master/docs/env_vars.md?ref_type=heads
+        # https://github.com/swaywm/sway/wiki/Running-programs-natively-under-wayland
+
+        # QT apps; require pkgs.qt5.qtwayland
+        export QT_QPA_PLATFORM=wayland-egl
+        export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+        # export QT_WAYLAND_FORCE_DPI=physical # use monitor's DPI instead of default (96)
+
+        # Elementary/EFL
+        export ECORE_EVAS_ENGINE=wayland_egl
+        export ELM_ENGINE=wayland_egl
+        export ELM_ACCEL=wayland_egl
+        export ELM_DISPLAY=wl
+
+        # SDL2 (SDL3+ uses wayland by default)
+        export SDL_VIDEODRIVER=wayland
+
+        # CLUTTER (discontinued):
+        export CLUTTER_BACKEND=wayland
+
+        # JAVA
+        export _JAVA_AWT_WM_NONREPARENTING=1
+        '';
     };
     xdg.portal = {
         enable = true;
@@ -174,6 +205,8 @@ in {
         tree                        # show nested folder structures
         wget                        # download files
         xdg-utils                   # open files appropriately
+
+        qt5.full
 
         # apps:
         chromium                    # web browser
