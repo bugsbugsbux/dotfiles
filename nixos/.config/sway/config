@@ -188,9 +188,6 @@ bar {
     done
 }
 
-# fix x11/xorg (requires xorg-xhost)
-exec xhost local:
-
 # terminal (requires:)
 set $foot               "foot"
 set $foot_tmux          "foot tmux -u"
