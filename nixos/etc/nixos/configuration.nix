@@ -69,6 +69,12 @@ in {
         wireless.enable = false;    # uses wpa_supplicant instead of networkmanager
     };
 
+    hardware.bluetooth = {
+        enable = true;
+        powerOnBoot = false;        # whether to start bluetooth immediately on boot
+    };
+    services.blueman.enable = true; # also provides blueman-applet
+
     fonts = let
         monego-font = pkgs.callPackage ./monego-font {};
     in {
