@@ -206,6 +206,7 @@ in {
         curl                        # make network requests
         git
             gh                      # access to github accouts
+        glib                        # provides `gio`
         neovim                      # editor
         nix-prefetch                # determine hash for FODs
         tree                        # show nested folder structures
@@ -230,6 +231,9 @@ in {
         "/share/git"
         "/share/foot/themes"
     ];
+
+    # userspace mounting, required for gio trash, gio mount, etc
+    services.gvfs.enable = true;
 
     #
     # users:
