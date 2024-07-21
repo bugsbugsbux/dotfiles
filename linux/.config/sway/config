@@ -155,7 +155,9 @@ seat * xcursor_theme default 25
 # wallpaper (requires swaybg)
 output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 # notifications
-exec mako
+exec swaync
+bindsym XF86Messenger exec swaync-client -t -sw
+bindsym $mod+n exec swaync-client -t -sw
 
 # status bar (requires jq, acpi, fonts: noto mono + noto emoji, wireplumber, networkmanager)
 bar {
