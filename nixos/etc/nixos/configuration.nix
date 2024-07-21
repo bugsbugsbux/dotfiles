@@ -164,6 +164,9 @@ in {
         xwayland.enable = true;
         wrapperFeatures.gtk = true; # sets appropriate env-vars for GTK stuff
         extraSessionCommands = ''
+        # fix: xdg-open
+        systemctl --user import-environment PATH
+
         # fix: `amdgpu: amdgpu_cs_ctx_create2 failed. (-13)`
         if [[ "$(hostname)" == "tpe14gen3" ]]; then
             export WLR_RENDERER='' + "\"\${WLR_RENDERER:-vulkan}\";" + ''
