@@ -152,7 +152,7 @@ in {
             grim                    # grab images from wayland
             jq                      # json parser,formatter
             libnotify               # provides notify-send
-            mako                    # notifications
+            swaynotificationcenter  # notifications
             slurp                   # select region from wayland
             swaybg                  # set background images
             tofi                    # opener
