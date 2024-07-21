@@ -280,6 +280,8 @@ in {
 
             # apps:
 
+            # games:
+            zeroad
         ];
     };
 
