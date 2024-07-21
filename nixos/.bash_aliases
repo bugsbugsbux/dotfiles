@@ -13,3 +13,5 @@ alias wscan='nmcli device wifi list'
 alias wcon='nmcli device wifi connect'
 alias woff='nmcli radio wifi off'
 alias won='nmcli radio wifi on'
+
+alias hl='grep --color --null-data'
