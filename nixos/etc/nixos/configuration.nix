@@ -214,6 +214,8 @@ in {
         killall                     # kill processes by name
         neovim                      # editor
         nix-prefetch                # determine hash for FODs
+        qemu_full                   # virtualization
+        quickemu                    # preconfigured virtual machines
         tree                        # show nested folder structures
         wget                        # download files
         xdg-utils                   # open files appropriately
