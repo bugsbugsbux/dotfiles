@@ -180,6 +180,10 @@ in {
         # for the following variables see:
         # https://gitlab.freedesktop.org/wlroots/wlroots/-/blob/master/docs/env_vars.md?ref_type=heads
         # https://github.com/swaywm/sway/wiki/Running-programs-natively-under-wayland
+        # https://wiki.nixos.org/wiki/Wayland
+
+        # Chromium/Electron
+        export NIXOS_OZONE_WL=1
 
         # QT apps; require pkgs.qt5.qtwayland
         export QT_QPA_PLATFORM=wayland-egl
