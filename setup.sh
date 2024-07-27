@@ -26,6 +26,12 @@ popd ()  { command popd  "$@"; } >/dev/null
 
 setup_dotfiles() {
 
+    # abort on dirty state
+    if [[ -e ~/.config || -e ~/.dot || -e ~/repos ]]; then
+        echo ERROR: some locations already exist! >&2
+        exit $ERR_EXISTING_FILES
+    fi
+
     # create required folders
     mkdir -p ~/.config ~/.dot ~/repos
 
@@ -104,10 +110,6 @@ setup_dotfiles() {
 # throw if prerequisites aren't met
 if (( "$UID" == 0 )); then
     echo ERROR: must not run as root! >&2
-    exit $ERR_EXISTING_FILES
-fi
-if [[ -e ~/.config || -e ~/.dot || -e ~/repos ]]; then
-    echo ERROR: some locations already exist! >&2
     exit $ERR_EXISTING_FILES
 fi
 case "$PLATFORM" in
