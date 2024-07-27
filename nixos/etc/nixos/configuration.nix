@@ -217,6 +217,11 @@ in {
     };
     hardware.opengl.enable = true;
 
+    programs.wireshark = {
+        enable = true;
+        package = pkgs.wireshark;
+    };
+
     #
     # more global packages
     # these link some outputs to /run/current-system/sw/
@@ -270,6 +275,7 @@ in {
         extraGroups = [
             "wheel"
             "networkmanager"
+            "wireshark"
         ];
         packages = with pkgs; [
             croc                    # securely send files
