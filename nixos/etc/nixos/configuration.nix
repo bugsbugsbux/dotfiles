@@ -150,6 +150,7 @@ in {
             foot                    # terminal
             foot.themes             # default themes for foot
             grim                    # grab images from wayland
+            imagemagick             # used in my config for color picker tool
             jq                      # json parser,formatter
             libnotify               # provides notify-send
             swaynotificationcenter  # notifications
