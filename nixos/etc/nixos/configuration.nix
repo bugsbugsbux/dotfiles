@@ -133,6 +133,13 @@ in {
         #criticalPowerAction = "";
     };
 
+    xdg.mime = {
+        # see also: xdg.mime.{added,removed}Associations
+        defaultApplications = {
+            "application/pdf" = [ "org.gnome.Evince.desktop" "chromium-browser.desktop"];
+        };
+    };
+
     environment.variables = {
         EDITOR = "nvim";
     };
