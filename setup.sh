@@ -107,6 +107,35 @@ setup_dotfiles() {
 
 }
 
+setup_home() {
+
+    # this is not for every platform
+    if [[ "$PLATFORM" != "linux" && "$PLATFORM" != "nixos" && "$PLATFORM" != "termux" ]]; then
+        echo "WARNING: setup_home does not do anything on platform $PLATFORM!" >&2
+        return
+    fi
+
+    # abort on dirty state
+    if [[ -e ~/Documents || -e ~/Videos || -e ~/Music || -e ~/Pictures ]]; then
+        echo ERROR: some locations already exist! >&2
+        exit $ERR_EXISTING_FILES
+    fi
+
+    # create data folders
+    mkdir -p ~/Data/{Documents,Videos,Music,Pictures}
+    ln --symbolic --relative ~/{Data/,}Documents
+    ln --symbolic --relative ~/{Data/,}Videos
+    ln --symbolic --relative ~/{Data/,}Music
+    ln --symbolic --relative ~/{Data/,}Pictures
+
+    # create a downloads folder
+    mkdir -p ~/Downloads
+
+    # create a user-fonts folder
+    mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}"/fonts
+
+}
+
 # throw if prerequisites aren't met
 if (( "$UID" == 0 )); then
     echo ERROR: must not run as root! >&2
@@ -121,3 +150,4 @@ case "$PLATFORM" in
 esac
 
 setup_dotfiles
+setup_home
