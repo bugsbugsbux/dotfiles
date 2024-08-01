@@ -256,12 +256,12 @@ in {
         chromium                    # web browser
         evince                      # pdf viewer
         gedit                       # graphical file editor
-        gnome.cheese                # webcam
         gnome.gnome-terminal        # my favorite terminal
         gnome.nautilus              # graphical file manager
         gnome.simple-scan           # scanner
         libreoffice-fresh           # document suite
         mpv                         # music,video player
+        snapshot                    # webcam
     ];
 
     environment.pathsToLink = [
