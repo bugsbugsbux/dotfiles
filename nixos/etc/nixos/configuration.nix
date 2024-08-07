@@ -261,6 +261,7 @@ in {
         gnome.simple-scan           # scanner
         libreoffice-fresh           # document suite
         mpv                         # music,video player
+        shotwell                    # image viewer
         snapshot                    # webcam
     ];
 
