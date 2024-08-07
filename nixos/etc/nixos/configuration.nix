@@ -92,6 +92,9 @@ in {
             corefonts
             vistafonts
 
+            # math fonts
+            fira-math
+
             # custom fonts:
             monego-font
         ];
