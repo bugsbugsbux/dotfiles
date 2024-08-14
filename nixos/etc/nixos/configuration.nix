@@ -160,6 +160,7 @@ in {
             foot                    # terminal
             foot.themes             # default themes for foot
             grim                    # grab images from wayland
+            glib                    # provides `gsettings`,`gio`
             imagemagick             # used in my config for color picker tool
             jq                      # json parser,formatter
             libnotify               # provides notify-send
@@ -168,6 +169,8 @@ in {
             swaybg                  # set background images
             tofi                    # opener
             wl-clipboard            # copy,paste on wayland
+
+            gnome.adwaita-icon-theme # provides cursor styles
 
             # etc
             pulsemixer              # graphically adjust volume
@@ -192,6 +195,11 @@ in {
         # https://gitlab.freedesktop.org/wlroots/wlroots/-/blob/master/docs/env_vars.md?ref_type=heads
         # https://github.com/swaywm/sway/wiki/Running-programs-natively-under-wayland
         # https://wiki.nixos.org/wiki/Wayland
+
+        # Gtk
+        # CHECK: ensure this matches settings in sway config
+        gsettings set org.gnome.desktop.interface cursor-theme Adwaita
+        gsettings set org.gnome.desktop.interface cursor-size 28
 
         # Chromium/Electron
         export NIXOS_OZONE_WL=1
@@ -242,7 +250,6 @@ in {
         curl                        # make network requests
         git
             gh                      # access to github accouts
-        glib                        # provides `gio`
         htop                        # process monitor
         killall                     # kill processes by name
         neovim                      # editor
