@@ -1,22 +1,34 @@
-Structure of the repo:
-~~~
-files are named and located as they would be in ~ or /
-except, that they are located in a subfolder of the repository-root
-which represents the target plattform (linux, windows, termux, nixos)
-~~~
+**What is this?**
 
-How this repo is to be used:
-~~~
-A bare repo in ~/repos
-    is used to combine the histories of the clones and to interact with UPSTREAM.
-    When a worktree is necessary it can be added using:
-    `git worktree add /tmp/master`
-    but has to be removed again for the clones to be able to interact with the bare repo! use:
-    `git worktree remove /tmp/master` (if the worktree exists and is clean) or
-    `git worktree prune` (if it was removed manually)
+This repo contains my dotfiles, separated by target paltform (the
+toplevel folders) and named as they would be in HOME or root, meaning
+`/etc/*` files would be in `PLATFORM/etc/*` and hidden files, like
+`~/.config/*`, stay hidden: `PLATFORM/.config/*`. This is because it
+makes it easier to automate the install process.
 
-Sparse clones of this repo are located in ~/.dot
-    They use a non-tracking branch 'dev'
-    and a tracking branch 'master' which pulls from and pushes to the bare repo
-    and is used to cherry pick from 'dev' to compose a nice history on 'master'
+**How to manage dotfiles?**
+
+Dotfiles are best managed by putting them into a repo somewhere and
+linking them to the correct places. However, this approach has problems:
+The links refer to the version in the current worktree, which might not
+be the latest (possibly uncommitted) one due to branching or stashing.
+The solution is to get multiple worktrees, either by using the `git
+worktree` command or by using multiple clones.
+
+Personally I prefer to create a `--bare` clone LOCAL of REMOTE and
+multiple local `sparse-checkout --no-cone` CLONES which only reveal
+files of a certain topic. Then I link to the CLONES, which have two
+branches: `dev`, receiving all commits, often undoing and redoing the
+same changes when experimenting, and `master`, fetching from LOCAL,
+cherry-picking from `dev` to create a nice history, and pushing
+back to LOCAL. LOCAL is used to push and pull to/from REMOTE.
+
+**`setup.sh`**
+
+The `setup.sh` script not only handles setting up the dotfiles,
+including creating the necessary files, folders and clones, but **also
+sets up the HOME directory how I like it.** Here is to to use it:
+
+~~~
+PLATFORM=myplatform ./setup.sh      # setting PLATFORM is required!
 ~~~
