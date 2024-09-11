@@ -131,6 +131,9 @@ setup_home() {
     # create a downloads folder
     mkdir -p ~/Downloads
 
+    # create a user bin/ folder
+    mkdir -p ~/.local/bin
+
     # create a user-fonts folder
     mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}"/fonts
 
