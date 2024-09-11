@@ -26,6 +26,9 @@ pushd () { command pushd "$@"; } >/dev/null
 popd ()  { command popd  "$@"; } >/dev/null
 
 
+# clones from REMOTE to ~/repos/dotfiles.git and
+# makes sparse-checkouts of it in ~/.dot
+# then links the files to the correct locations as specified here:
 setup_dotfiles() {
 
     # abort on dirty state
