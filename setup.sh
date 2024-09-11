@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 ERR_GENERIC=50
 ERR_USAGE=51
 ERR_ARGS=52
