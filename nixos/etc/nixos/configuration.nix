@@ -143,6 +143,7 @@ in {
         };
     };
 
+    environment.localBinInPath = true;
     environment.variables = {
         EDITOR = "nvim";
     };
