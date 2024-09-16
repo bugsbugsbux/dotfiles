@@ -274,6 +274,7 @@ in {
         mpv                         # music,video player
         shotwell                    # image viewer
         snapshot                    # webcam
+        kooha                       # screencast
     ];
 
     environment.pathsToLink = [
