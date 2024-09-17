@@ -4,7 +4,7 @@ return function()
     vim.bo.syntax = "markdown"
     vim.wo.spell = true
     vim.bo.textwidth = 72
-    vim.wo.colorcolumn = "73"
+    vim.wo.colorcolumn = "+1"
     -- While concealing: conceal current line only in normal-mode
     vim.wo.concealcursor = 'nc'
     -- But by default disable all concealing:
