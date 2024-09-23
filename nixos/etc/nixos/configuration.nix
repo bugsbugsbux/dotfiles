@@ -315,6 +315,9 @@ in {
                 cargo               # compile rust
                 unixtools.xxd       # vim's hexviewer for hex.nvim
 
+            # programming
+            j
+
             # apps:
 
             # games:
