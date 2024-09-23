@@ -20,6 +20,11 @@ PS1='\w ($?)> '
 
 set -o vi       # not needed if set in ~/.inputrc
 
+# better ctrl-r with fzf
+if type -t fzf &>/dev/null; then
+    eval "$(fzf --bash)"
+fi
+
 greeter() {
 
     # notify of littered $HOME/Downloads
