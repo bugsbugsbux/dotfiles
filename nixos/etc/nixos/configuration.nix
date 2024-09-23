@@ -88,6 +88,8 @@ in {
             noto-fonts-color-emoji      # already included when fonts.enableDefaultPackages=true
             noto-fonts-monochrome-emoji # monochrome emojis CANNOT take precedence over colored ones
 
+            google-fonts
+
             # windows fonts
             corefonts
             vistafonts
