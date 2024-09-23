@@ -317,6 +317,7 @@ in {
 
             # programming
             j
+            python312
 
             # apps:
 
