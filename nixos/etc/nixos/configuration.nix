@@ -45,7 +45,7 @@ in {
     time.timeZone = "Europe/Berlin";
 
     # sync time with a timeserver
-    services.chrony.enable = true;
+    services.timesyncd.enable = true; # systemd-timesyncd
 
     i18n.defaultLocale = "en_US.UTF-8";
     i18n.extraLocaleSettings = {
