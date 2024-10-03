@@ -321,6 +321,7 @@ in {
         extraGroups = [
             "wheel"                 # allows elevating privileges
             "networkmanager"        # allows modifying connections
+            "kvm"                   # improves android emulator performance
             "wireshark"
         ];
         packages = with pkgs; [
