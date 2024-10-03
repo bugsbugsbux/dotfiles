@@ -296,8 +296,8 @@ in {
         initialPassword = "change_me_after_install";
         isNormalUser = true;
         extraGroups = [
-            "wheel"
-            "networkmanager"
+            "wheel"                 # allows elevating privileges
+            "networkmanager"        # allows modifying connections
             "wireshark"
         ];
         packages = with pkgs; [
