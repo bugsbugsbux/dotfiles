@@ -26,6 +26,16 @@ in {
         persistent = true; # run once if one or more runs were missed
     };
 
+    # optimise (=hardlink identical files)
+    # *) manually: `sudo nix-store --optimise`
+    # *) with every build:
+    #nix.settings.auto-optimise-store = true;
+    # *) at regular intervals:
+    nix.optimise = {
+        automatic = true;
+        dates = [ "20:00" ];
+    };
+
     #
     # system:
     #
