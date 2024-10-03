@@ -55,6 +55,11 @@ in {
         efi.canTouchEfiVariables = true;
     };
 
+    # Architectures to be able to emulate:
+    boot.binfmt.emulatedSystems = [
+        "aarch64-linux"     # =arm64
+    ];
+
     boot.tmp.cleanOnBoot = true;    # clear /tmp on startup
 
     console.keyMap = "de-latin1";
