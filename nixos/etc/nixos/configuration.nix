@@ -181,6 +181,13 @@ in {
         #    extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
         #};
 
+    # run unpatched linux executables
+    programs.nix-ld = {
+        enable = true;
+        # put necessary libraries here:
+        #libraries = with pkgs; [];
+    };
+
     environment.localBinInPath = true;
     environment.variables = {
         EDITOR = "nvim";
