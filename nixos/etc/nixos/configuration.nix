@@ -194,6 +194,7 @@ in {
 
             # etc
             pulsemixer              # graphically adjust volume
+            xorg.xeyes              # to test whether apps are x11 or wayland
         ];
         xwayland.enable = true;
         wrapperFeatures.gtk = true; # sets appropriate env-vars for GTK stuff
