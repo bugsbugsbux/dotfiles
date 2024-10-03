@@ -19,6 +19,13 @@ in {
 
     nixpkgs.config.allowUnfree = true;
 
+    # to run gc manually use `nix-collect-garbage`
+    nix.gc = {
+        automatic = true;
+        dates = "14 days"; # see: `man systemd.time`
+        persistent = true; # run once if one or more runs were missed
+    };
+
     #
     # system:
     #
