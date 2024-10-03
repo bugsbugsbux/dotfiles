@@ -323,6 +323,7 @@ in {
             fd                      # find alternative
             fish                    # like bash but more user friendly
             fzf                     # for better bash history search (ctrl-r); see bashrc
+            libfaketime             # provides faketime command
             pandoc                  # markup converter
             ripgrep                 # fast file content searcher
             tmux                    # terminal multiplexer
