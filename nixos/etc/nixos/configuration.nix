@@ -294,6 +294,7 @@ in {
     environment.systemPackages = with pkgs; [
         bash-completion             # tab completion
         curl                        # make network requests
+        easyeffects                 # apply audio effects
         git
             gh                      # access to github accouts
         htop                        # process monitor
