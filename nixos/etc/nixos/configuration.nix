@@ -252,7 +252,7 @@ in {
         export NIXOS_OZONE_WL=1
 
         # QT apps; require pkgs.qt5.qtwayland
-        export QT_QPA_PLATFORM=wayland-egl
+        export QT_QPA_PLATFORM="wayland-egl;xcb"
         export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
         # export QT_WAYLAND_FORCE_DPI=physical # use monitor's DPI instead of default (96)
 
