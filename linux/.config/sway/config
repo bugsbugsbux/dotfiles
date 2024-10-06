@@ -149,7 +149,7 @@ output "Messeltronik Dresden GmbH MD20529 V520LSD00649" {
 
 # looks (requires noto font)
 font "Noto Sans Mono 12"
-default_border pixel 2
+default_border pixel 3
 titlebar_padding 7 1
 seat * xcursor_theme default 25
 # wallpaper (requires swaybg)
