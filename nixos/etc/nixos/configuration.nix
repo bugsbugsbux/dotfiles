@@ -305,6 +305,7 @@ in {
         qemu_full                   # virtualization
         quickemu                    # preconfigured virtual machines
         tree                        # show nested folder structures
+        typst                       # markup language targeting pdf
         wget                        # download files
         xdg-utils                   # open files appropriately
 
