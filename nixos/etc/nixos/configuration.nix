@@ -17,8 +17,6 @@ in {
 
     nix.settings.experimental-features = ["nix-command" "flakes"];
 
-    nixpkgs.config.allowUnfree = true;
-
     # to run gc manually use `nix-collect-garbage`
     nix.gc = {
         automatic = true;
@@ -35,6 +33,12 @@ in {
         automatic = true;
         dates = [ "20:00" ];
     };
+
+    nixpkgs.config.allowUnfree = true;
+    nixpkgs.overlays = [
+        # widevine is google's proprietary DRM software required for spotify etc
+        (final: prev: {chromium = prev.chromium.override { enableWideVine = true; }; })
+    ];
 
     #
     # system:
