@@ -113,7 +113,7 @@ in {
             noto-fonts-cjk-sans
             #noto-fonts-cjk-serif
             noto-fonts-color-emoji      # already included when fonts.enableDefaultPackages=true
-            noto-fonts-monochrome-emoji # monochrome emojis CANNOT take precedence over colored ones
+            #noto-fonts-monochrome-emoji # monochrome emojis CANNOT take precedence over colored ones
 
             google-fonts
 
