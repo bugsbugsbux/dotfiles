@@ -110,7 +110,8 @@ in {
         enableDefaultPackages = true; # has noto-fonts-color-emoji -> monochrome cannot be preferred
         packages = with pkgs; [
             noto-fonts
-            noto-fonts-cjk
+            noto-fonts-cjk-sans
+            #noto-fonts-cjk-serif
             noto-fonts-color-emoji      # already included when fonts.enableDefaultPackages=true
             noto-fonts-monochrome-emoji # monochrome emojis CANNOT take precedence over colored ones
 
