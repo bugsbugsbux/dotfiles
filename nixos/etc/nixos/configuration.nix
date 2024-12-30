@@ -174,17 +174,12 @@ in {
 
     # TODO: make this hostname dependant
     hardware.amdgpu.amdvlk.enable = true; # vulkan drivers
-    hardware.opengl = {
+    hardware.graphics = {
         enable = true;
+        enable32Bit = true;
         extraPackages = with pkgs; [ amdvlk ];
         extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
-    }; # TODO: in 24.11 replace hardware.opengl with hardware.graphics like so:
-        #hardware.graphics = {
-        #    enable = true;
-        #    enable32Bit = true;
-        #    extraPackages = with pkgs; [ amdvlk ];
-        #    extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
-        #};
+    };
 
     # run unpatched linux executables
     programs.nix-ld = {
