@@ -348,6 +348,7 @@ in {
             pandoc                  # markup converter
             ripgrep                 # fast file content searcher
             tmux                    # terminal multiplexer
+            scrcpy                  # "screen copy" shows phone screen on desktop
 
             # for my neovim config:
                 gnumake             # make for mason.nvim
