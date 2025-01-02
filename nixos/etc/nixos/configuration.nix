@@ -246,7 +246,7 @@ in {
         # Gtk
         # CHECK: ensure this matches settings in sway config
         gsettings set org.gnome.desktop.interface cursor-theme Adwaita
-        gsettings set org.gnome.desktop.interface cursor-size 28
+        gsettings set org.gnome.desktop.interface cursor-size 32
 
         # Chromium/Electron
         export NIXOS_OZONE_WL=1
