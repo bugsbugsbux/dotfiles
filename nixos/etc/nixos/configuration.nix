@@ -235,7 +235,7 @@ in {
             tofi                    # opener
             wl-clipboard            # copy,paste on wayland
 
-            gnome.adwaita-icon-theme # provides cursor styles
+            adwaita-icon-theme      # provides cursor styles
 
             # etc
             pulsemixer              # graphically adjust volume
@@ -332,9 +332,9 @@ in {
         chromium                    # web browser
         evince                      # pdf viewer
         gedit                       # graphical file editor
-        gnome.gnome-terminal        # my favorite terminal
-        gnome.nautilus              # graphical file manager
-        gnome.simple-scan           # scanner
+        gnome-terminal              # my favorite terminal
+        nautilus                    # graphical file manager
+        simple-scan                 # scanner
         libreoffice-fresh           # document suite
         mpv                         # music,video player
         shotwell                    # image viewer
