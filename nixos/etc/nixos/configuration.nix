@@ -188,6 +188,25 @@ in {
         #libraries = with pkgs; [];
     };
 
+    # FLATPAKs
+    # - NOTE: USER HAS TO MANUALLY MANAGE FLATPAKS!
+    # - flatpaks can also be enabled per user by adding pkgs.flatpak to its packages
+    # - when enabling them per user or with some DEs like sway one needs to manually
+    #   export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
+    services.flatpak.enable = true;
+    systemd.services.my-default-global-flatpak-repos = {
+        wantedBy = ["multi-user.target"];
+        path = [ pkgs.flatpak ];
+        script = ''
+            flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+        '';
+    };
+    # - NOTE: if flatpaks complain about not finding fonts, try:
+    #   1. enable fonts.fontDir.enable=true (done above)
+    #   2. mkdir -p $HOME/.local/share/fonts
+    #   3. cp --dereference /run/current-system/sw/share/X11/fonts/* $HOME/.local/share/fonts/
+    #   4. do NOT grant flatpaks access to this font folder!
+
     environment.localBinInPath = true;
     environment.variables = {
         EDITOR = "nvim";
@@ -233,6 +252,9 @@ in {
             export WLR_RENDERER='' + "\"\${WLR_RENDERER:-vulkan}\";" + ''
 
         fi
+
+        # fix: flatpak paths
+        export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
 
         # once sway started we know, that truecolor support is possible, which it is
         # not in the tty, and thus this var is here and not in environment.variables
