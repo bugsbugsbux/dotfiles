@@ -1,6 +1,10 @@
 # don't do anything when not interactive
 [[ $- != *i* ]] && return
 
+# current_os will be "Arch" on ArchLinux and "nixos" on NixOS
+declare current_os
+current_os=$(cat /etc/lsb-release | grep DISTRIB_ID | cut -d= -f2)
+
 #suppress failures if my color util is not installed
 type -t color &>/dev/null || color() {
     echo -n ''
@@ -28,17 +32,20 @@ if type -t fzf &>/dev/null; then
 fi
 
 greeter() {
-    # # packages
-    # echo -en $(color red)
-    # ## notify of .pacnew and .pacsave files
-    # find /etc -regextype posix-extended -regex ".+\.pac(new|save)" 2> /dev/null
-    # ## notify of big cache
-    # if test -d /var/cache/pacman/pkg; then
-    #     echo -e "Current pacman cache is:" "$(
-    #         du -sh -t 10G /var/cache/pacman/pkg | cut -f1
-    #     )" 'Use `pacman -Sc; paru --clean` to clean it.'
-    # fi
-    # echo -en $(color reset)
+
+    # inform about package-manager clutter and cache
+    if test "Arch" = "$current_os" ; then
+        echo -en $(color red)
+        ## notify of .pacnew and .pacsave files
+        find /etc -regextype posix-extended -regex ".+\.pac(new|save)" 2> /dev/null
+        ## notify of big cache
+        if test -d /var/cache/pacman/pkg; then
+            echo -e "Current pacman cache is:" "$(
+                du -sh -t 10G /var/cache/pacman/pkg | cut -f1
+            )" 'Use `pacman -Sc; paru --clean` to clean it.'
+        fi
+        echo -en $(color reset)
+    fi
 
     # notify of littered $HOME/Downloads
     echo -en $(color red)
