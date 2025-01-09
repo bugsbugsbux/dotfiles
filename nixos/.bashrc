@@ -11,6 +11,8 @@ test -e ~/.bash_aliases && source ~/.bash_aliases
 # unlimited history
 HISTSIZE=-1
 HISTFILESIZE=-1
+# ignore duplicates and lines staring with space:
+HISTCONTROL=ignoreboth
 # immediately write history; doesn't destroy local history
 shopt -s histappend
 PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
