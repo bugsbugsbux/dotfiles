@@ -54,7 +54,7 @@ setup_dotfiles() {
             git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/etc
             git checkout --quiet -b dev
             echo "PLEASE manually install files from '$PWD/$PLATFORM/etc/…' to '/etc/…'"
-            # on nixos put a link to the local nixos configuration folder into HOME:
+            # on nixos put a link to here into HOME:
             if [[ "$PLATFORM" == "nixos" ]]; then
                 linkstall "${PLATFORM}/etc/nixos" ~/nixos
             fi
