@@ -281,11 +281,6 @@ in {
         ];
     };
 
-    programs.wireshark = {
-        enable = true;
-        package = pkgs.wireshark;
-    };
-
     #
     # more global packages
     # these link some outputs to /run/current-system/sw/
@@ -344,7 +339,6 @@ in {
             "wheel"                 # allows elevating privileges
             "networkmanager"        # allows modifying connections
             "kvm"                   # improves android emulator performance
-            "wireshark"
         ];
         packages = with pkgs; [
             croc                    # securely send files
