@@ -61,52 +61,52 @@ setup_dotfiles() {
         pushd shell
             git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/{.{bash,input}rc,.{,bash_}profile,.bash_{login,logout,aliases}}
             git checkout --quiet -b dev
-            linkstall {$PLATFORM,~}/.bashrc
-            linkstall {$PLATFORM,~}/.inputrc
-            # linkstall {$PLATFORM,~}/.profile
-            linkstall {$PLATFORM,~}/.bash_profile
-            # linkstall {$PLATFORM,~}/.bash_login
-            # linkstall {$PLATFORM,~}/.bash_logout
-            linkstall {$PLATFORM,~}/.bash_aliases
+            linkstall {"$PLATFORM",~}/.bashrc
+            linkstall {"$PLATFORM",~}/.inputrc
+            # linkstall {"$PLATFORM",~}/.profile
+            linkstall {"$PLATFORM",~}/.bash_profile
+            # linkstall {"$PLATFORM",~}/.bash_login
+            # linkstall {"$PLATFORM",~}/.bash_logout
+            linkstall {"$PLATFORM",~}/.bash_aliases
         popd; }
         git clone --quiet "$BARE" fish && {
         pushd fish
             git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/fish
             git checkout --quiet -b dev
-            linkstall {$PLATFORM,~}/.config/fish
+            linkstall {"$PLATFORM",~}/.config/fish
         popd; }
         git clone --quiet "$BARE" sway && {
         pushd sway
             git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{mako,sway,tofi}
             git checkout --quiet -b dev
-            linkstall {$PLATFORM,~}/.config/mako
-            linkstall {$PLATFORM,~}/.config/sway
-            linkstall {$PLATFORM,~}/.config/tofi
+            linkstall {"$PLATFORM",~}/.config/mako
+            linkstall {"$PLATFORM",~}/.config/sway
+            linkstall {"$PLATFORM",~}/.config/tofi
         popd; }
         git clone --quiet "$BARE" term && {
         pushd term
             git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{alacritty,foot,wezterm}
             git checkout --quiet -b dev
-            linkstall {$PLATFORM,~}/.config/alacritty
-            linkstall {$PLATFORM,~}/.config/foot
-            linkstall {$PLATFORM,~}/.config/wezterm
+            linkstall {"$PLATFORM",~}/.config/alacritty
+            linkstall {"$PLATFORM",~}/.config/foot
+            linkstall {"$PLATFORM",~}/.config/wezterm
         popd; }
         git clone --quiet "$BARE" nvim && {
         pushd nvim
             git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/nvim
             git checkout --quiet -b dev
-            linkstall {$PLATFORM,~}/.config/nvim
+            linkstall {"$PLATFORM",~}/.config/nvim
         popd; }
         git clone --quiet "$BARE" other && {
         pushd other
             git sparse-checkout set --no-cone {linux,nixos,termux,windows}/.config/{git,tmux,wireplumber}
             git sparse-checkout add /{linux,nixos,termux,windows}/{.npmrc,.config/chromium-flags.conf}
             git checkout --quiet -b dev
-            linkstall {$PLATFORM,~}/.npmrc
-            linkstall {$PLATFORM,~}/.config/git
-            linkstall {$PLATFORM,~}/.config/tmux
-            linkstall {$PLATFORM,~}/.config/wireplumber
-            linkstall {$PLATFORM,~}/.config/chromium-flags.conf
+            linkstall {"$PLATFORM",~}/.npmrc
+            linkstall {"$PLATFORM",~}/.config/git
+            linkstall {"$PLATFORM",~}/.config/tmux
+            linkstall {"$PLATFORM",~}/.config/wireplumber
+            linkstall {"$PLATFORM",~}/.config/chromium-flags.conf
         popd; }
     popd
 
