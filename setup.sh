@@ -51,7 +51,7 @@ setup_dotfiles() {
 
         git clone --quiet "$BARE" etc && {
         pushd etc
-            git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/etc
+            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/etc
             git checkout --quiet -b dev
             echo "PLEASE manually install files from '$PWD/$PLATFORM/etc/…' to '/etc/…'"
             # on nixos put a link to the local nixos configuration folder into HOME:
@@ -62,7 +62,7 @@ setup_dotfiles() {
 
         git clone --quiet "$BARE" shell && {
         pushd shell
-            git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/{.{bash,input}rc,.{,bash_}profile,.bash_{login,logout,aliases}}
+            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/{.{bash,input}rc,.{,bash_}profile,.bash_{login,logout,aliases}}
             git checkout --quiet -b dev
             linkstall {"$PLATFORM",~}/.bashrc
             linkstall {"$PLATFORM",~}/.inputrc
@@ -75,14 +75,14 @@ setup_dotfiles() {
 
         git clone --quiet "$BARE" fish && {
         pushd fish
-            git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/.config/fish
+            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/.config/fish
             git checkout --quiet -b dev
             linkstall {"$PLATFORM",~}/.config/fish
         popd; }
 
         git clone --quiet "$BARE" sway && {
         pushd sway
-            git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/.config/{mako,sway,tofi}
+            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/.config/{mako,sway,tofi}
             git checkout --quiet -b dev
             linkstall {"$PLATFORM",~}/.config/mako
             linkstall {"$PLATFORM",~}/.config/sway
@@ -91,7 +91,7 @@ setup_dotfiles() {
 
         git clone --quiet "$BARE" term && {
         pushd term
-            git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/.config/{alacritty,foot,wezterm}
+            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/.config/{alacritty,foot,wezterm}
             git checkout --quiet -b dev
             linkstall {"$PLATFORM",~}/.config/alacritty
             linkstall {"$PLATFORM",~}/.config/foot
@@ -100,14 +100,14 @@ setup_dotfiles() {
 
         git clone --quiet "$BARE" nvim && {
         pushd nvim
-            git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/.config/nvim
+            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/.config/nvim
             git checkout --quiet -b dev
             linkstall {"$PLATFORM",~}/.config/nvim
         popd; }
 
         git clone --quiet "$BARE" other && {
         pushd other
-            git sparse-checkout set --no-cone /{linux,nixos,termux,windows}/.config/{git,tmux,wireplumber}
+            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/.config/{git,tmux,wireplumber}
             git sparse-checkout add /{linux,nixos,termux,windows}/{.npmrc,.config/chromium-flags.conf}
             git checkout --quiet -b dev
             linkstall {"$PLATFORM",~}/.npmrc
