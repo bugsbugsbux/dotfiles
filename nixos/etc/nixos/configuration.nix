@@ -17,7 +17,28 @@ in {
 
     nix.settings.experimental-features = ["nix-command" "flakes"];
 
+    # to run gc manually use `nix-collect-garbage`
+    nix.gc = {
+        automatic = true;
+        dates = "14 days"; # see: `man systemd.time`
+        persistent = true; # run once if one or more runs were missed
+    };
+
+    # optimise (=hardlink identical files)
+    # *) manually: `sudo nix-store --optimise`
+    # *) with every build:
+    #nix.settings.auto-optimise-store = true;
+    # *) at regular intervals:
+    nix.optimise = {
+        automatic = true;
+        dates = [ "20:00" ];
+    };
+
     nixpkgs.config.allowUnfree = true;
+    nixpkgs.overlays = [
+        # widevine is google's proprietary DRM software required for spotify etc
+        (final: prev: {chromium = prev.chromium.override { enableWideVine = true; }; })
+    ];
 
     #
     # system:
@@ -38,6 +59,11 @@ in {
         efi.canTouchEfiVariables = true;
     };
 
+    # Architectures to be able to emulate:
+    boot.binfmt.emulatedSystems = [
+        "aarch64-linux"     # =arm64
+    ];
+
     boot.tmp.cleanOnBoot = true;    # clear /tmp on startup
 
     console.keyMap = "de-latin1";
@@ -45,7 +71,7 @@ in {
     time.timeZone = "Europe/Berlin";
 
     # sync time with a timeserver
-    services.chrony.enable = true;
+    services.timesyncd.enable = true; # systemd-timesyncd
 
     i18n.defaultLocale = "en_US.UTF-8";
     i18n.extraLocaleSettings = {
@@ -84,9 +110,12 @@ in {
         enableDefaultPackages = true; # has noto-fonts-color-emoji -> monochrome cannot be preferred
         packages = with pkgs; [
             noto-fonts
-            noto-fonts-cjk
+            noto-fonts-cjk-sans
+            #noto-fonts-cjk-serif
             noto-fonts-color-emoji      # already included when fonts.enableDefaultPackages=true
-            noto-fonts-monochrome-emoji # monochrome emojis CANNOT take precedence over colored ones
+            #noto-fonts-monochrome-emoji # monochrome emojis CANNOT take precedence over colored ones
+
+            google-fonts
 
             # windows fonts
             corefonts
@@ -123,8 +152,93 @@ in {
     };
     security.rtkit.enable = true;   # for pulseaudio
 
-    # printing via cups
+    # printing (CUPS runs on http://localhost:631; foomatic is not needed when using CUPS, which we do)
     services.printing.enable = true;
+    # drivers; if nothing works, try connecting via the network: IPP-Eveywhere works without drivers
+    services.printing.drivers = with pkgs; [
+
+        # driver packages from nixpkgs:
+        splix               # printers supporting SPL (Samsung-Printer-Language, not only used by samsung)
+        samsung-unified-linux-driver # some Samsung printers
+        gutenprint          # driver collection for various vendors
+        gutenprintBin       # binary-only driver collection for various vendors
+        hplip               # some HP printers
+        hplipWithPlugin     # more HP printers; requires: `nix-shell -p hplipWithPlugin --run "sudo -E hp-setup"`
+        postscript-lexmark  # printers from lexmark
+        brlaser             # some Brother printers
+        brgenml1lpr brgenml1cupswrapper # generic Brother drivers
+        cnijfilter2         # some Canon Pixma printers
+
+        # manually downloaded drivers:
+        #(writeTextDir "share/cups/model/HP_Color_Laser_MFP_17x_Series.ppd" (builtins.readFile ~/Downloads/hp-uld-drivers/uld/noarch/share/ppd/HP_Color_Laser_MFP_17x_Series.ppd))
+    ];
+    # setup my known printers here in the config (optional)
+    # manually changing their settings later won't persist!
+    #hardware.printers = {
+    #    ensurePrinters = [
+    #        {
+    #            name = "";
+    #            location = "";
+    #            diviceUri = ""; # "http://..." or "usb://"
+    #            model = "SOME.PPD"; # might start with "drv:///..."
+    #            ppdOptions = {
+    #                PageSize = "A4";
+    #            };
+    #        }
+    #    ];
+    #};
+
+    # scanning
+    # NOTE: users must be in "scanner" and "lp" groups
+    # NOTE: changes may need reboot
+    hardware.sane = {
+        enable = true;
+        extraBackends = with pkgs; [
+            sane-airscan    # airscan, ms wsd scanners NOTE: also add this to services.udev.packages
+            hplipWithPlugin # most hp scanners
+            epkowa          # epson scanners
+            utsushi         # more epson; NOTE: also add this to services.udev.packages
+        ];
+
+        # NOTE: downloadable/extracted scansnap snapscan firmware must be added to nixpkgs.config.sane.snapscanFirmware
+        #drivers.scanSnap.enable = true;
+
+        # brother brscan4 scanners can be enabled by importing the following module
+        #<nixpkgs/nixos/modules/services/hardware/sane_extra_backends/brscan4.nix>
+        # and then adding a scanner from it here:
+        #brscan4 = {
+        #    enable = true;
+        #    netDevices = {
+        #        home = { model = ""; ip = ""; };
+        #    };
+        #};
+
+        #if scanners are found twice (once by airscan and once by escl) uncomment this:
+        # disabledDefaultBackends = [ "escl" ];
+
+        # find network scanners:
+        #openFirewall = true; # i believe its tcp port 6566
+        # try to find scanners on these hosts:
+        #netConf = ''
+        #    192.168.0.1
+        #    10.0.0.1
+        #'';
+    };
+    #nixpkgs.config.sane.snapscanFirmware = pkgs.fetchurl { url = ""; sha256 = ""; };
+
+    services.udev.packages = with pkgs; [
+        sane-airscan    # airscan
+        utsushi         # epson
+    ];
+
+    # find network printers (udp port 5353) and scanners (see also: hardware.sane.openFirewall)
+    services.avahi = {
+        enable = true;
+        openFirewall = true;
+        nssmdns4 = true;
+    };
+    # driverless (airless) printing/scanning via usb cable
+    services.ipp-usb.enable = true;
 
     # power management
     services.upower = {
@@ -142,6 +256,41 @@ in {
             "application/pdf" = [ "org.gnome.Evince.desktop" "chromium-browser.desktop"];
         };
     };
+
+    # TODO: make this hostname dependant
+    hardware.amdgpu.amdvlk.enable = true; # vulkan drivers
+    hardware.graphics = {
+        enable = true;
+        enable32Bit = true;
+        extraPackages = with pkgs; [ amdvlk ];
+        extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
+    };
+
+    # run unpatched linux executables
+    programs.nix-ld = {
+        enable = true;
+        # put necessary libraries here:
+        #libraries = with pkgs; [];
+    };
+
+    # FLATPAKs
+    # - NOTE: USER HAS TO MANUALLY MANAGE FLATPAKS!
+    # - flatpaks can also be enabled per user by adding pkgs.flatpak to its packages
+    # - when enabling them per user or with some DEs like sway one needs to manually
+    #   export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
+    services.flatpak.enable = true;
+    systemd.services.my-default-global-flatpak-repos = {
+        wantedBy = ["multi-user.target"];
+        path = [ pkgs.flatpak ];
+        script = ''
+            flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+        '';
+    };
+    # - NOTE: if flatpaks complain about not finding fonts, try:
+    #   1. enable fonts.fontDir.enable=true (done above)
+    #   2. mkdir -p $HOME/.local/share/fonts
+    #   3. cp --dereference /run/current-system/sw/share/X11/fonts/* $HOME/.local/share/fonts/
+    #   4. do NOT grant flatpaks access to this font folder!
 
     environment.localBinInPath = true;
     environment.variables = {
@@ -171,10 +320,11 @@ in {
             tofi                    # opener
             wl-clipboard            # copy,paste on wayland
 
-            gnome.adwaita-icon-theme # provides cursor styles
+            adwaita-icon-theme      # provides cursor styles
 
             # etc
             pulsemixer              # graphically adjust volume
+            xorg.xeyes              # to test whether apps are x11 or wayland
         ];
         xwayland.enable = true;
         wrapperFeatures.gtk = true; # sets appropriate env-vars for GTK stuff
@@ -188,6 +338,9 @@ in {
 
         fi
 
+        # fix: flatpak paths
+        export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
+
         # once sway started we know, that truecolor support is possible, which it is
         # not in the tty, and thus this var is here and not in environment.variables
         export COLORTERM=truecolor
@@ -200,13 +353,13 @@ in {
         # Gtk
         # CHECK: ensure this matches settings in sway config
         gsettings set org.gnome.desktop.interface cursor-theme Adwaita
-        gsettings set org.gnome.desktop.interface cursor-size 28
+        gsettings set org.gnome.desktop.interface cursor-size 32
 
         # Chromium/Electron
         export NIXOS_OZONE_WL=1
 
         # QT apps; require pkgs.qt5.qtwayland
-        export QT_QPA_PLATFORM=wayland-egl
+        export QT_QPA_PLATFORM="wayland-egl;xcb"
         export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
         # export QT_WAYLAND_FORCE_DPI=physical # use monitor's DPI instead of default (96)
 
@@ -234,12 +387,6 @@ in {
             xdg-desktop-portal-gtk
         ];
     };
-    hardware.opengl.enable = true;
-
-    programs.wireshark = {
-        enable = true;
-        package = pkgs.wireshark;
-    };
 
     #
     # more global packages
@@ -249,31 +396,37 @@ in {
     environment.systemPackages = with pkgs; [
         bash-completion             # tab completion
         curl                        # make network requests
+        easyeffects                 # apply audio effects
         git
             gh                      # access to github accouts
         htop                        # process monitor
         killall                     # kill processes by name
+        usbutils                    # provides lsusb
         neovim                      # editor
         nix-prefetch                # determine hash for FODs
         qemu_full                   # virtualization
         quickemu                    # preconfigured virtual machines
         tree                        # show nested folder structures
+        typst                       # markup language targeting pdf
         wget                        # download files
         xdg-utils                   # open files appropriately
 
         qt5.full
 
+        system-config-printer       # gui printer setup; or use localhost:631
+
         # apps:
         chromium                    # web browser
         evince                      # pdf viewer
         gedit                       # graphical file editor
-        gnome.gnome-terminal        # my favorite terminal
-        gnome.nautilus              # graphical file manager
-        gnome.simple-scan           # scanner
+        gnome-terminal              # my favorite terminal
+        nautilus                    # graphical file manager
+        simple-scan                 # scanner
         libreoffice-fresh           # document suite
         mpv                         # music,video player
         shotwell                    # image viewer
         snapshot                    # webcam
+        kooha                       # screencast
     ];
 
     environment.pathsToLink = [
@@ -292,17 +445,21 @@ in {
         initialPassword = "change_me_after_install";
         isNormalUser = true;
         extraGroups = [
-            "wheel"
-            "networkmanager"
-            "wireshark"
+            "wheel"                 # allows elevating privileges
+            "networkmanager"        # allows modifying connections
+            "scanner"               # allows using scanners
+            "lp"                    # allows using scanners which are also printers
+            "kvm"                   # improves android emulator performance
         ];
         packages = with pkgs; [
             croc                    # securely send files
             fd                      # find alternative
-            fish                    # like bash but more user friendly
+            fzf                     # for better bash history search (ctrl-r); see bashrc
+            libfaketime             # provides faketime command
             pandoc                  # markup converter
             ripgrep                 # fast file content searcher
             tmux                    # terminal multiplexer
+            scrcpy                  # "screen copy" shows phone screen on desktop
 
             # for my neovim config:
                 gnumake             # make for mason.nvim
@@ -310,6 +467,10 @@ in {
                 gcc                 # compile c and cpp
                 cargo               # compile rust
                 unixtools.xxd       # vim's hexviewer for hex.nvim
+
+            # programming
+            j
+            python312
 
             # apps:
 

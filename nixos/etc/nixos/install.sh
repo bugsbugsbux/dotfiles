@@ -12,7 +12,7 @@ NAME="${NAME:-$(hostname)}"
 
 echo "build directory is: $BUILDDIR" >&2
 
-# patch
+# cp config to BUILDDIR & patch
 
 cp ./configuration.nix "$BUILDDIR"
 patch "${BUILDDIR}/configuration.nix" "${NAME}.patch" || {
