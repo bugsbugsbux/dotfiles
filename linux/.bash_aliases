@@ -11,9 +11,14 @@ alias open='xdg-open'
 
 alias untar='tar xaf' # auto detects compression
 
-alias wscan='nmcli device wifi list'
+alias wscan='nmcli device wifi list --rescan yes'
 alias wcon='nmcli device wifi connect'
 alias woff='nmcli radio wifi off'
 alias won='nmcli radio wifi on'
+
+alias p1='ping -c4 1.1.1.1'
+alias p8='ping -c4 8.8.8.8'
+alias p138='ping -c4 10.0.0.138'
+alias p192='ping -c4 192.168.0.1'
 
 alias hl='grep --color --null-data'
