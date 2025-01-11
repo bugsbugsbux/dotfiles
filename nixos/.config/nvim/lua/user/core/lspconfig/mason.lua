@@ -33,5 +33,25 @@ return function(default_on_attach, capabilities)
                 default_mason_lspconfig_handler('jsonls')
             end
         end,
+        ['tinymist'] = function(server_name) ---@diagnostic disable-line:unused-local
+            lspconfig['tinymist'].setup{
+                on_attach = default_on_attach,
+                capabilities = capabilities,
+                single_file_support = true,
+                root_dir = function()
+                    return vim.fn.getcwd()
+                end,
+
+                -- fix https://github.com/neovim/neovim/issues/30675
+                -- the problem is that utf16-encoded positions are expected, but
+                -- utf8-encoded ones are sent by this lsp, so we need to specify that
+                offset_encoding = "utf-8",
+
+                settings = {
+                    exportPdf = "onSave",
+                    outputPath = "$root/tmp/$dir/$name",
+                },
+            }
+        end,
     }
 end
