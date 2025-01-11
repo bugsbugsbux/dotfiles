@@ -17,6 +17,9 @@ vim.o.mouse = '' -- disable mouse; also disables copy to clipboard, thus:
 vim.o.clipboard = 'unnamedplus' -- auto yank to system clipbard "+
 -- vim.o.clipboard = 'unnamed' -- auto yank to primary selection "* (middle click)
 
+-- specify vim settings in edited file using a modeline:
+vim.o.modelines = 2 -- only search first 2 and last 2 lines for modelines; default: 5
+
 vim.o.updatetime = 50  -- ms, default=4000 -- CursorHold event and write swap file
 
 -- no swap or backup file
