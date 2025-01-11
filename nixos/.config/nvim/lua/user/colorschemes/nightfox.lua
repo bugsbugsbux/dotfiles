@@ -1,3 +1,11 @@
+require('nightfox').setup{
+    options = {
+        styles = { -- for valid values see: `:help attr-list`, combine multiple with ,
+            --comments = "italic",
+        },
+    },
+}
+
 local nightfox_group = {
   selected = { light = 'dayfox', dark = 'carbonfox' },
   variants = {

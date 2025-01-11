@@ -10,7 +10,7 @@ require('tokyonight').setup({
     style = 'night',
     light_style = 'day',
     styles = {
-        comments = { italic = true },
+        comments = { italic = false },
     },
     dim_inactive = true,
     --day_brightness = 0.3, -- default 0.3

@@ -1,4 +1,8 @@
-require('catppuccin').setup{}
+require('catppuccin').setup{
+    styles = {
+        comments = {},
+    },
+}
 
 local catppuccin_group = {
     selected = { light = 'catppuccin-latte', dark = 'catppuccin-mocha' },

@@ -10,7 +10,7 @@ vim.g.material_style = 'deep ocean'
 
 require('material').setup{
     styles = {
-        comments = { italic = true },
+        comments = { italic = false },
     },
     high_visibility = {
         lighter = true,

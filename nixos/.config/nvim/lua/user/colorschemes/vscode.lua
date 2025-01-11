@@ -1,7 +1,7 @@
 -- VSCode-like colorscheme: https://github.com/Mofiqul/vscode.nvim
 
 require('vscode').setup({
-    italic_comments = true,
+    italic_comments = false,
 })
 
 local group = {
