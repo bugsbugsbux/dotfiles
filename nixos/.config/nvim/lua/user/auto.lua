@@ -64,5 +64,6 @@ augroup myFiletypeAutoCmds
     autocmd FileType text lua require('user.ftconf.text')()
     autocmd FileType typst lua require('user.ftconf.typst')()
     autocmd FileType vim  lua require('user.ftconf.vim')()
+    autocmd FileType zig  lua require('user.ftconf.zig')()
 augroup END
 ]])
