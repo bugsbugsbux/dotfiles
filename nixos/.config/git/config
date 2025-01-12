@@ -12,9 +12,9 @@
 	default = current
 ###
 [pager]
-	log =  /run/current-system/sw/share/git/contrib/diff-highlight/diff-highlight | less
-	show = /run/current-system/sw/share/git/contrib/diff-highlight/diff-highlight | less
-	diff = /run/current-system/sw/share/git/contrib/diff-highlight/diff-highlight | less
+	log = ~/.config/git/diff-highlight.sh
+	show = ~/.config/git/diff-highlight.sh
+	diff = ~/.config/git/diff-highlight.sh
 ###
 [diff]
 	tool = nvim
