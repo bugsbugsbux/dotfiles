@@ -34,7 +34,7 @@ local material_group = {
     },
     custom_switches = {
         material = function(light_or_dark)
-            local shared = require('user.lightswitch.shared')
+            local shared = require('lightswitch.shared')
             if light_or_dark == 'light' then
                 vim.cmd('colorscheme ' .. shared.themes.material.selected.light)
             else
