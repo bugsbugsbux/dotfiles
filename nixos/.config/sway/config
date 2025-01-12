@@ -206,8 +206,9 @@ bindsym $mod+Shift+Return exec $term
 bindsym $mod+t exec $tmux_term
 bindsym $mod+Shift+t exec $term
 
-# launcher (requires tofi, [compgen is a bash builtin])
-set $launcher compgen -c | tofi-run | xargs swaymsg exec --
+# launcher (if necessary obtain executables with bash builtin `compgen -c`)
+# requires tofi
+set $launcher tofi-run | xargs swaymsg exec --
 bindsym $mod+o exec $launcher
 
 # browser (requires:)
