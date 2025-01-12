@@ -139,7 +139,7 @@ input type:keyboard {
 output eDP-1 scale 1.2
 # name as make+model+serial (show with: swaymsg -t get_outputs)
 # my external monitor via hdmi
-output "Messeltronik Dresden GmbH MD20529 0x00000101" {
+output "Messeltronik Dresden GmbH MD20529 0x01010101" {
     transform 90
 }
 # my external monitor via vga
