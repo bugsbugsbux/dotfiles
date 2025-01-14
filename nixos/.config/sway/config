@@ -2,6 +2,13 @@
 
 include /etc/sway/config.d/*
 
+# statup script allowing to differentiate for different systems
+# - requires swaybg
+# - requires xhost (xorg-xhost)
+# - requires bluetoothctl (bluez)
+# - requires blueman-applet (blueman)
+exec ~/.config/sway/startup.sh
+
 set $alt   Mod1
 set $super Mod4
 set $mod   $super
@@ -139,7 +146,7 @@ input type:keyboard {
 output eDP-1 scale 1.2
 # name as make+model+serial (show with: swaymsg -t get_outputs)
 # my external monitor via hdmi
-output "Messeltronik Dresden GmbH MD20529 0x00000101" {
+output "Messeltronik Dresden GmbH MD20529 0x01010101" {
     transform 90
 }
 # my external monitor via vga
@@ -147,13 +154,11 @@ output "Messeltronik Dresden GmbH MD20529 V520LSD00649" {
     transform 90
 }
 
-# looks (requires noto font)
+# looks (requires noto font, adwait cursor theme)
 font "Noto Sans Mono 12"
-default_border pixel 2
+default_border pixel 3
 titlebar_padding 7 1
-seat * xcursor_theme Adwaita 28
-# wallpaper (requires swaybg)
-output * bg /run/current-system/sw/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+seat * xcursor_theme Adwaita 32
 # notifications
 exec swaync
 bindsym XF86Messenger exec swaync-client -t -sw
@@ -206,8 +211,9 @@ bindsym $mod+Shift+Return exec $term
 bindsym $mod+t exec $tmux_term
 bindsym $mod+Shift+t exec $term
 
-# launcher (requires tofi, [compgen is a bash builtin])
-set $launcher compgen -c | tofi-run | xargs swaymsg exec --
+# launcher (if necessary obtain executables with bash builtin `compgen -c`)
+# requires tofi
+set $launcher tofi-run | xargs swaymsg exec --
 bindsym $mod+o exec $launcher
 
 # browser (requires:)
@@ -238,12 +244,6 @@ bindsym Shift+Print exec grim -g "$(slurp)" "$HOME"/Downloads/screensection_$(da
 
 # determine color (requires grim, slurp, libnotify, imagemagick)
 bindsym $mod+c exec notify-send "color is:" "$(grim -g "$(slurp -p)" -t ppm - | convert - -format '%[pixel:p{0,0}]' txt:- | tail -1 | cut -d ' ' -f 2-)"
-
-# bluetooth
-# disable by default (requires bluez)
-#exec bluetoothctl power off
-# activate systray icon (requires blueman)
-#exec blueman-applet
 
 # qemu
 for_window [title="^QEMU .*"] border none
