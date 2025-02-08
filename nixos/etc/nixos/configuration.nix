@@ -66,6 +66,14 @@ in {
 
     boot.tmp.cleanOnBoot = true;    # clear /tmp on startup
 
+    # kernel
+    # unmaintained ones, such as outdated non-LTS, not available
+    # specific ones such as linux_6_13 are in pkgs.linuxKernel.kernels.*
+    # latest stable: pkgs.linuxPackages
+    # latest release: pkgs.linuxPackages_latest
+    # latest RC (=candidate): pkgs.linuxPackages_testing
+    boot.kernelPackages = pkgs.linuxPackages_latest;
+
     console.keyMap = "de-latin1";
 
     time.timeZone = "Europe/Berlin";
