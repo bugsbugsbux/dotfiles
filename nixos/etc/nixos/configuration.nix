@@ -162,39 +162,39 @@ in {
 
     # printing (CUPS runs on http://localhost:631; foomatic is not needed when using CUPS, which we do)
     services.printing.enable = true;
-    # drivers; if nothing works, try connecting via the network: IPP-Eveywhere works without drivers
-    services.printing.drivers = with pkgs; [
-
-        # driver packages from nixpkgs:
-        splix               # printers supporting SPL (Samsung-Printer-Language, not only used by samsung)
-        samsung-unified-linux-driver # some Samsung printers
-        gutenprint          # driver collection for various vendors
-        gutenprintBin       # binary-only driver collection for various vendors
-        hplip               # some HP printers
-        hplipWithPlugin     # more HP printers; requires: `nix-shell -p hplipWithPlugin --run "sudo -E hp-setup"`
-        postscript-lexmark  # printers from lexmark
-        brlaser             # some Brother printers
-        brgenml1lpr brgenml1cupswrapper # generic Brother drivers
-        cnijfilter2         # some Canon Pixma printers
-
-        # manually downloaded drivers:
-        #(writeTextDir "share/cups/model/HP_Color_Laser_MFP_17x_Series.ppd" (builtins.readFile ~/Downloads/hp-uld-drivers/uld/noarch/share/ppd/HP_Color_Laser_MFP_17x_Series.ppd))
-    ];
-    # setup my known printers here in the config (optional)
-    # manually changing their settings later won't persist!
-    #hardware.printers = {
-    #    ensurePrinters = [
-    #        {
-    #            name = "";
-    #            location = "";
-    #            diviceUri = ""; # "http://..." or "usb://"
-    #            model = "SOME.PPD"; # might start with "drv:///..."
-    #            ppdOptions = {
-    #                PageSize = "A4";
-    #            };
-    #        }
-    #    ];
-    #};
+    ## drivers; if nothing works, try connecting via the network: IPP-Eveywhere works without drivers
+    #services.printing.drivers = with pkgs; [
+    #
+    #    # driver packages from nixpkgs:
+    #    splix               # printers supporting SPL (Samsung-Printer-Language, not only used by samsung)
+    #    samsung-unified-linux-driver # some Samsung printers
+    #    gutenprint          # driver collection for various vendors
+    #    gutenprintBin       # binary-only driver collection for various vendors
+    #    hplip               # some HP printers
+    #    hplipWithPlugin     # more HP printers; requires: `nix-shell -p hplipWithPlugin --run "sudo -E hp-setup"`
+    #    postscript-lexmark  # printers from lexmark
+    #    brlaser             # some Brother printers
+    #    brgenml1lpr brgenml1cupswrapper # generic Brother drivers
+    #    cnijfilter2         # some Canon Pixma printers
+    #
+    #    # manually downloaded drivers:
+    #    #(writeTextDir "share/cups/model/HP_Color_Laser_MFP_17x_Series.ppd" (builtins.readFile ~/Downloads/hp-uld-drivers/uld/noarch/share/ppd/HP_Color_Laser_MFP_17x_Series.ppd))
+    #];
+    ## setup my known printers here in the config (optional)
+    ## manually changing their settings later won't persist!
+    ##hardware.printers = {
+    ##    ensurePrinters = [
+    ##        {
+    ##            name = "";
+    ##            location = "";
+    ##            diviceUri = ""; # "http://..." or "usb://"
+    ##            model = "SOME.PPD"; # might start with "drv:///..."
+    ##            ppdOptions = {
+    ##                PageSize = "A4";
+    ##            };
+    ##        }
+    ##    ];
+    ##};
 
     # scanning
     # NOTE: users must be in "scanner" and "lp" groups
@@ -203,9 +203,9 @@ in {
         enable = true;
         extraBackends = with pkgs; [
             sane-airscan    # airscan, ms wsd scanners NOTE: also add this to services.udev.packages
-            hplipWithPlugin # most hp scanners
-            epkowa          # epson scanners
-            utsushi         # more epson; NOTE: also add this to services.udev.packages
+            #hplipWithPlugin # most hp scanners
+            #epkowa          # epson scanners
+            #utsushi         # more epson; NOTE: also add this to services.udev.packages
         ];
 
         # NOTE: downloadable/extracted scansnap snapscan firmware must be added to nixpkgs.config.sane.snapscanFirmware
@@ -225,7 +225,7 @@ in {
         # disabledDefaultBackends = [ "escl" ];
 
         # find network scanners:
-        #openFirewall = true; # i believe its tcp port 6566
+        openFirewall = true; # i believe its tcp port 6566
         # try to find scanners on these hosts:
         #netConf = ''
         #    192.168.0.1
@@ -236,7 +236,7 @@ in {
 
     services.udev.packages = with pkgs; [
         sane-airscan    # airscan
-        utsushi         # epson
+        #utsushi         # some epson scanners
     ];
 
     # find network printers (udp port 5353) and scanners (see also: hardware.sane.openFirewall)
@@ -246,6 +246,7 @@ in {
         nssmdns4 = true;
     };
     # driverless (airless) printing/scanning via usb cable
+    # CHECK: is the service running? i had to run `systemctl start ipp-usb.service` once
     services.ipp-usb.enable = true;
 
     # power management
