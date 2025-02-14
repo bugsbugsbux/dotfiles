@@ -83,9 +83,8 @@ main() {
         fatalError $INVOC_AS_ROOT_ERR "Must not run as root!"
     fi
 
-    if ! type -t diff &>/dev/null; then
+    ! type -t diff &>/dev/null && \
         fatalError $DEPENDENCY_ERR 'Missing dependency: diff (from diffutils package)'
-    fi
 
     # handle arguments
     local currentOpt
