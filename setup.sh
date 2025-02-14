@@ -185,7 +185,7 @@ hasUnstaged() {
     return 1
 }
 hasStaged() {
-    if ! git diff-index --quiet --chached HEAD -- &>/dev/null; then # -> fails if has such
+    if ! git diff-index --quiet --cached HEAD &>/dev/null; then # -> fails if has such
         infomsg "$PWD has staged files"
         return 0
     fi
