@@ -179,14 +179,14 @@ isRepo() {
 
 hasUnstaged() {
     if ! git diff-files --quiet &>/dev/null; then # -> fails if has such
-        echo "$PWD has unstaged files"
+        infomsg "$PWD has unstaged files"
         return 0
     fi
     return 1
 }
 hasStaged() {
     if ! git diff-index --quiet --chached HEAD -- &>/dev/null; then # -> fails if has such
-        echo "$PWD has staged files"
+        infomsg "$PWD has staged files"
         return 0
     fi
     return 1
@@ -194,7 +194,7 @@ hasStaged() {
 hasUntrackedUnignored() {
     # untracked, non-ignored files?
     if test -n "$(git ls-files --exclude-standard --others 2>/dev/null)"; then
-        echo "$PWD has unracked, non-ignored files"
+        infomsg "$PWD has unracked, non-ignored files"
         return 0
     fi
     return 1
