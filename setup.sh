@@ -178,23 +178,27 @@ isRepo() {
 }
 
 hasUnstaged() {
-    if ! git diff-files --quiet &>/dev/null; then # -> fails if has such
+    # this git command compares index and workingtree and fails if they differ
+    if ! git diff-files --quiet &>/dev/null; then
         infomsg "$PWD has unstaged files"
         return 0
     fi
     return 1
 }
 hasStaged() {
-    if ! git diff-index --quiet --cached HEAD &>/dev/null; then # -> fails if has such
+    # this git command compares HEAD to the index and fails if they differ
+    if ! git diff-index --quiet --cached HEAD &>/dev/null; then
         infomsg "$PWD has staged files"
         return 0
     fi
     return 1
 }
 hasUntrackedUnignored() {
-    # untracked, non-ignored files?
-    if test -n "$(git ls-files --exclude-standard --others 2>/dev/null)"; then
-        infomsg "$PWD has unracked, non-ignored files"
+    # `ls-files` usually lists all tracked files, but
+    # `--other` specifies to only show untracked files
+    # `--exclude-standard` except those ignored with gitignore
+    if test -n "$(git ls-files --others --exclude-standard 2>/dev/null)"; then
+        infomsg "$PWD has untracked, non-ignored files"
         return 0
     fi
     return 1
