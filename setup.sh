@@ -104,7 +104,7 @@ main() {
             esac
         else
             case "$arg" in
-                '-h'|'--help') echo -- "$DOCSTRING"; exit 0 ;;
+                '-h'|'--help') echo -e "$DOCSTRING"; exit 0 ;;
                 '-r'|'--remote') currentOpt=remote ;;
                 -r=*|--remote=*) REMOTE="${arg#*=}";;
                 '-b'|'--bare') currentOpt=bare ;;
@@ -135,9 +135,9 @@ popd() { command popd "$@"; } >/dev/null
 ##### helpers: #####
 
 # always prints to stderr; prefer the logging functions instead
-stderr() { echo -e -- "$*" >&2; }
+stderr() { echo -e "$*" >&2; }
 # prints to stdout to avoid user-suppression via stderr-redirection
-call_for_action() { echo -e -- "PLEASE: $*"; }
+call_for_action() { echo -e "PLEASE: $*"; }
 # various logging functions; always return true;
 errmsg() { [[ "$LOGGING_LVL" -gt 0 ]] && stderr "Error: $*"; :; }
 warnmsg() { [[ "$LOGGING_LVL" -gt 1 ]] && stderr "Warning: $*"; :; }
@@ -151,7 +151,7 @@ fatalError() {
         code="$1"
         shift
     fi
-    echo -- "FATAL ERROR! $*" >&2
+    stderr "FATAL ERROR! $*" >&2
     exit "$code"
 }
 
