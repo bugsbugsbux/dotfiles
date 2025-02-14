@@ -83,6 +83,8 @@ main() {
         fatalError $INVOC_AS_ROOT_ERR "Must not run as root!"
     fi
 
+    ! type -t git &>/dev/null && \
+        fatalError $DEPENDENCY_ERR 'Missing dependency: git'
     ! type -t diff &>/dev/null && \
         fatalError $DEPENDENCY_ERR 'Missing dependency: diff (from diffutils package)'
 
