@@ -479,5 +479,5 @@ handler_other() {
     linkstall {linux,~}/.config/chromium-flags.conf
 }
 
-##### run this script: #####
-main "$@"
+##### run this script, unless this file is sourced: #####
+(return &>/dev/null) || main "$@"
