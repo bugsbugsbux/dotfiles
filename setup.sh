@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# tags: TODO, NOTE, FIXME, DEBUG
+
 #disable the unwarranted warnings about unhandled cd/pushd/popd
 # shellcheck disable=SC2164
 
@@ -138,13 +140,13 @@ popd() { command popd "$@"; } >/dev/null
 stderr() { echo -e "$*" >&2; }
 # prints to stdout to avoid user-suppression via stderr-redirection
 call_for_action() { echo -e "PLEASE: $*"; }
-# various logging functions; always return true;
+# various logging functions printing to stderr; always return true
 errmsg() { [[ "$LOGGING_LVL" -gt 0 ]] && stderr "Error: $*"; :; }
 warnmsg() { [[ "$LOGGING_LVL" -gt 1 ]] && stderr "Warning: $*"; :; }
 infomsg() { [[ "$LOGGING_LVL" -gt 2 ]] && stderr "Info: $*"; :; }
 debugmsg() { [[ "$LOGGING_LVL" -gt 3 ]] && stderr "Debug: $*"; :; }
 
-# usage: invocationError [exitCode] error message ...
+# args: [exitCode] error message ...
 fatalError() {
     local code=$GENERIC_ERR
     if [[ "$1" == [0-9]* ]]; then
@@ -163,6 +165,7 @@ isTermux() {
     test -d /data/data/com.termux/files
 }
 
+# args: [path]
 # check if $1 (or if omitted PWD) is a git repo
 isRepo() {
     local d="${1:-.}" # . if $1 omitted
@@ -178,6 +181,7 @@ isRepo() {
     fi
 }
 
+# target repo is PWD
 hasUnstaged() {
     # this git command compares index and workingtree and fails if they differ
     if ! git diff-files --quiet &>/dev/null; then
@@ -186,6 +190,7 @@ hasUnstaged() {
     fi
     return 1
 }
+# target repo is PWD
 hasStaged() {
     # this git command compares HEAD to the index and fails if they differ
     if ! git diff-index --quiet --cached HEAD &>/dev/null; then
@@ -194,6 +199,7 @@ hasStaged() {
     fi
     return 1
 }
+# target repo is PWD
 hasUntrackedUnignored() {
     # `ls-files` usually lists all tracked files, but
     # `--other` specifies to only show untracked files
@@ -216,8 +222,8 @@ linkstall() {
         return $ARG_ERR
     fi
     local src dst
-    src="${1/#'~'/$HOME}"
-    dst="${2/#'~'/$HOME}"
+    src="${1/#'~'/$HOME}" # expand literal tilde
+    dst="${2/#'~'/$HOME}" # expand literal tilde
     if [[ ! -e "$src" ]]; then
         errmsg "'$src' does not exist!"
         return $ARG_ERR
@@ -259,8 +265,8 @@ manual_install() {
         return $ARG_ERR
     fi
     local src dst
-    src="${1/#'~'/$HOME}"
-    dst="${2/#'~'/$HOME}"
+    src="${1/#'~'/$HOME}" # expand literal tilde
+    dst="${2/#'~'/$HOME}" # expand literal tilde
     if [[ ! -e "$src" ]]; then
         errmsg "'$src' does not exist"
         return $ARG_ERR
@@ -343,8 +349,7 @@ setup_dotfiles() {
     popd; }
 }
 
-# $1=name
-# $2=handler
+# args: name handler
 cloneAndHandle() {
     if [[ "$#" -ne 2 ]]; then
         errmsg "expected exactly 2 args: name and handler"
