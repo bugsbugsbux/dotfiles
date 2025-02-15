@@ -166,6 +166,7 @@ isTermux() {
 # check if $1 (or if omitted PWD) is a git repo
 isRepo() {
     local d="${1:-.}" # . if $1 omitted
+    d="${d/#'~'/$HOME}" # expand literal tilde
     local status
     if pushd "$d"; then
         status="$(git rev-parse --is-inside-work-tree 2>/dev/null)$(git rev-parse --is-inside-git-dir 2>/dev/null)"
