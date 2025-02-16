@@ -7,7 +7,7 @@ fi
 
 # setup
 
-BUILDDIR=$(mktemp -d)
+BUILDDIR="$(mktemp -d)"
 NAME="${NAME:-$(hostname)}"
 
 echo "build directory is: $BUILDDIR" >&2
@@ -22,7 +22,7 @@ patch --no-backup-if-mismatch "${BUILDDIR}/configuration.nix" "${NAME}.patch" ||
 
 # copy other files to BUILDDIR
 
-cp --recursive --target-directory "$BUILDDIR" $(
+cp --recursive --target-directory="$BUILDDIR" $(
     ls -1 | grep --invert-match --line-regexp "\
 configuration\.nix
 install\.sh
