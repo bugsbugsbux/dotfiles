@@ -12,12 +12,10 @@ fi
 BUILDDIR="$(mktemp -d)"
 NAME="${NAME:-$(hostname)}"
 
-echo "build directory is: $BUILDDIR" >&2
-
 # cp config to BUILDDIR & patch
 
 cp ./configuration.nix "$BUILDDIR"
-patch --no-backup-if-mismatch "${BUILDDIR}/configuration.nix" "${NAME}.patch" || {
+patch --silent --no-backup-if-mismatch "${BUILDDIR}/configuration.nix" "${NAME}.patch" || {
     rm -rf "$BUILDDIR"
     exit 1
 }
