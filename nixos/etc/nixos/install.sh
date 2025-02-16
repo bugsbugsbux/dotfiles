@@ -15,7 +15,7 @@ echo "build directory is: $BUILDDIR" >&2
 # cp config to BUILDDIR & patch
 
 cp ./configuration.nix "$BUILDDIR"
-patch "${BUILDDIR}/configuration.nix" "${NAME}.patch" || {
+patch --no-backup-if-mismatch "${BUILDDIR}/configuration.nix" "${NAME}.patch" || {
     rm -rf "$BUILDDIR"
     exit 1
 }
