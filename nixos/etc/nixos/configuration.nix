@@ -301,6 +301,20 @@ in {
     #   3. cp --dereference /run/current-system/sw/share/X11/fonts/* $HOME/.local/share/fonts/
     #   4. do NOT grant flatpaks access to this font folder!
 
+    # APPIMAGEs
+    # - traditionally appimages are simply executed after making them executable:
+    #   with `chmod u+x my.appimage; ./my.appimage [args...]`
+    # - most of the time this fails on nixos due to hardcoded paths; instead run appimages
+    #   with `appimage-run ./my.appimage [args...]`
+    # - to do this automatically when executing an appimage set programs.appimage.binfmt=true;
+    # - NOTE: if it still doesn't work (and there's no other way to install) package yourself
+    #   using `appimageTools.wrapType2 { inherit name src; extraPkgs = pkgs: [pkgs.mydep]; };`
+    #   see: https://nixos.org/manual/nixpkgs/stable/#sec-pkgs-appimageTools
+    programs.appimage = {
+        enable = true;      # provides pkgs.appimage-run
+        binfmt = true;      # automatically interpret `./my.appimage` as `appimage-run ./my.appimage`
+    };
+
     environment.localBinInPath = true;
     environment.variables = {
         EDITOR = "nvim";
