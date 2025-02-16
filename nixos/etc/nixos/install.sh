@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Usage: [NAME=myhostname] ./install.sh
+
 if [[ "$(basename "$PWD")" != "nixos" ]]; then
     echo You seem to be in the wrong directory! >&2
     exit 1
