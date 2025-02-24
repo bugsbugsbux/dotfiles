@@ -15,15 +15,16 @@
 #   + disallow arguments of type directory (othewise can't diff them)
 # - abort if no diffutils (diff) found
 
-DOCSTRING='
+DOCSTRING=\
+'Usage: ./setup.sh [opts]
+
 This script shall "install" your dotfiles and set up HOME. In other words,
 it shall place, usually as symbolic link, certain files and directories
 in their correct locations (as specified in this script). This script shall
 not handle "uninstalling" any files, however, it should handle encountering
 already "installed" files gracefully.
 
-Dotfiles are managed as follows:
-
+Concept:
 +------+       Upstream repo. Used for syncing between different hosts.
 |REMOTE|       Should be set with -r=someUrl
 +------+
@@ -46,8 +47,7 @@ Dotfiles are managed as follows:
 |dotfile|      A link to, or sometimes a copy of, the relevant
 +-------+      version-controlled file in a repo in folder CLONES.
 
-Usage: ./setup.sh [args]
-Args:
+Options:
 -h --help       print this help-text and exit
 -r= --remote=   where to clone BARE from
                 default: PWD
