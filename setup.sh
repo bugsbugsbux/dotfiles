@@ -5,6 +5,8 @@
 #disable the unwarranted warnings about unhandled cd/pushd/popd
 # shellcheck disable=SC2164
 
+# shellcheck disable=SC2120
+
 # TODO:
 # - echo does not have -- option; use printf instead
 # - only warn of existing files when they are not links pointing to the correct location
@@ -124,6 +126,13 @@ main() {
         fi
     done
 
+    # unless debugging suppress popd & pushd output
+    if [[ "$LOGGING_LVL" -lt 4 ]]; then
+        pushd() { command pushd "$@"; } >/dev/null
+        # shellcheck disable=SC2120
+        popd() { command popd "$@"; } >/dev/null
+    fi
+
     # invoke subroutines
     setup_home
     setup_dotfiles
@@ -131,10 +140,6 @@ main() {
 
 ##### overrides: #####
 
-# suppress pushd, popd output
-pushd() { command pushd "$@"; } >/dev/null
-# shellcheck disable=SC2120
-popd() { command popd "$@"; } >/dev/null
 
 ##### helpers: #####
 
