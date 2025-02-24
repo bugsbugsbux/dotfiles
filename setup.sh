@@ -100,9 +100,10 @@ main() {
                 'bare') BARE="$arg"; currentOpt= ;;
                 'clones') CLONES="$arg"; currentOpt= ;;
                 'logging') LOGGING_LVL="$arg"; currentOpt=
-                    isValidLoggingLevel "$LOGGING_LVL" || fatalError $SCRIPT_ARG_ERR "Invalid logging level"
+                    isValidLoggingLevel "$LOGGING_LVL" \
+                        || fatalError $SCRIPT_ARG_ERR "Invalid logging level"
                 ;;
-                *) fatalError $GENERIC_ERR "Logic error." ;;
+                *) fatalError $GENERIC_ERR "unreachable" ;;
             esac
         else
             case "$arg" in
@@ -115,7 +116,8 @@ main() {
                 -c=*|--clones=*) CLONES="${arg#*=}";;
                 '-l'|'--logging-level') currentOpt=logging ;;
                 -l=*|--logging-level=*) LOGGING_LVL="${arg#*=}"
-                    isValidLoggingLevel "$LOGGING_LVL" || fatalError $SCRIPT_ARG_ERR "Invalid logging level"
+                    isValidLoggingLevel "$LOGGING_LVL" \
+                        || fatalError $SCRIPT_ARG_ERR "Invalid logging level"
                 ;;
                 *) fatalError $SCRIPT_ARG_ERR "Unknown argument '$arg'" ;;
             esac
