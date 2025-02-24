@@ -140,18 +140,36 @@ main() {
 
 ##### overrides: #####
 
+# check whether logging level is _at least_ ...
+IF_LVL_ERR()   { [[ "$LOGGING_LVL" -gt 0 ]]; }
+IF_LVL_WARN()  { [[ "$LOGGING_LVL" -gt 1 ]]; }
+IF_LVL_INFO()  { [[ "$LOGGING_LVL" -gt 2 ]]; }
+IF_LVL_DEBUG() { [[ "$LOGGING_LVL" -gt 3 ]]; }
+
+# print to stderr interpreting backslashes; always returns true, doesn't forward options
+stderr() { echo -e "$*" >&2; :; }
+
+# args: [opt|--] message ...
+logmsg() {
+    case "$1" in
+        '--') shift;;
+        '-e'|'--error') ! IF_LVL_ERR && return 0; shift;;
+        '-w'|'--warn')  ! IF_LVL_WARN && return 0; shift;;
+        '-i'|'--info')  ! IF_LVL_INFO && return 0; shift;;
+        '-d'|'--debug') ! IF_LVL_DEBUG && return 0; shift;;
+    esac
+    stderr "$*"
+}
+# wrappers:
+errmsg()  { logmsg -e "Error: $*"; }
+warnmsg() { logmsg -w "Warn: $*"; }
+infomsg() { logmsg -i "Info: $*"; }
+debugmsg(){ logmsg -d "Debug: $*"; }
 
 ##### helpers: #####
 
-# always prints to stderr; prefer the logging functions instead
-stderr() { echo -e "$*" >&2; }
 # prints to stdout to avoid user-suppression via stderr-redirection
 call_for_action() { echo -e "PLEASE: $*"; }
-# various logging functions printing to stderr; always return true
-errmsg() { [[ "$LOGGING_LVL" -gt 0 ]] && stderr "Error: $*"; :; }
-warnmsg() { [[ "$LOGGING_LVL" -gt 1 ]] && stderr "Warning: $*"; :; }
-infomsg() { [[ "$LOGGING_LVL" -gt 2 ]] && stderr "Info: $*"; :; }
-debugmsg() { [[ "$LOGGING_LVL" -gt 3 ]] && stderr "Debug: $*"; :; }
 
 # args: [exitCode] error message ...
 fatalError() {
