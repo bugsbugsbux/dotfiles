@@ -4,7 +4,7 @@
 
 #disable the unwarranted warnings about unhandled cd/pushd/popd
 # shellcheck disable=SC2164
-
+#disable "arguments mentioned never passed" warning caused by my debug messages
 # shellcheck disable=SC2120
 
 # TODO:
@@ -83,6 +83,8 @@ LOGGING_LVL=2 # for meaning see DOCSTRING
 isValidLoggingLevel() { [[ "$1" == [0-4] ]]; }
 
 main() {
+    # cannot log here since logging level still unknown
+
     if (( "$UID" == 0 )); then
         fatalError $INVOC_AS_ROOT_ERR "Must not run as root!"
     fi
@@ -173,6 +175,7 @@ call_for_action() { echo -e "PLEASE: $*"; }
 
 # args: [exitCode] error message ...
 fatalError() {
+    debugmsg "### fatalError $*"
     local code=$GENERIC_ERR
     if [[ "$1" == [0-9]* ]]; then
         code="$1"
@@ -183,16 +186,19 @@ fatalError() {
 }
 
 isNixOS() {
+    debugmsg "### isNixOS $*"
     test -f /etc/lsb-release || return 1
     test "$(grep --max-count=1 --fixed-string DISTRIB_ID /etc/lsb-release | cut -d= -f2)" = "nixos"
 }
 isTermux() {
+    debugmsg "### isTermux $*"
     test -d /data/data/com.termux/files
 }
 
 # args: [path]
 # check if $1 (or if omitted PWD) is a git repo
 isRepo() {
+    debugmsg "### isRepo $*"
     local d="${1:-.}" # . if $1 omitted
     d="${d/#'~'/$HOME}" # expand literal tilde
     local status
@@ -208,6 +214,7 @@ isRepo() {
 
 # target repo is PWD
 hasUnstaged() {
+    debugmsg "### hasUnstaged $*"
     # this git command compares index and workingtree and fails if they differ
     if ! git diff-files --quiet &>/dev/null; then
         infomsg "$PWD has unstaged files"
@@ -217,6 +224,7 @@ hasUnstaged() {
 }
 # target repo is PWD
 hasStaged() {
+    debugmsg "### hasStaged $*"
     # this git command compares HEAD to the index and fails if they differ
     if ! git diff-index --quiet --cached HEAD &>/dev/null; then
         infomsg "$PWD has staged files"
@@ -226,6 +234,7 @@ hasStaged() {
 }
 # target repo is PWD
 hasUntrackedUnignored() {
+    debugmsg "### hasUntrackedUnignored $*"
     # `ls-files` usually lists all tracked files, but
     # `--other` specifies to only show untracked files
     # `--exclude-standard` except those ignored with gitignore
@@ -236,12 +245,27 @@ hasUntrackedUnignored() {
     return 1
 }
 
-normalizePath() { realpath --canonicalize-missing --logical --physical "$1"; }
-resolveLink() { readlink --canonicalize-missing "$1"; }
+# args: path
+normalizePath() {
+    debugmsg "### normalizePath $* #:"
+    local result
+    result="$(realpath --canonicalize-missing --logical --physical "$1")"
+    logmsg -d "\t$result"
+    printf '%s\n' "$result"
+}
+# args: path
+resolveLink() {
+    debugmsg "### resolveLink $* #:"
+    local result
+    result="$(readlink --canonicalize-missing "$1")"
+    logmsg -d "\t$result"
+    printf '%s\n' "$result"
+}
 
 # installs $1 to location $2 by creating a symlink
 # unless $2 already exists
 linkstall() {
+    debugmsg "### linkstall $*"
     if [[ "$#" -ne 2 ]]; then
         errmsg "expected exactly 2 args: src and dst"
         return $ARG_ERR
@@ -258,7 +282,10 @@ linkstall() {
         if [[ -L "$dst" ]]; then # its a link:
             local normalized_src normalized_resolved_dst_link
             normalized_src="$(normalizePath "$src")"
+            debugmsg "normalized_src='$normalized_src'"
             normalized_resolved_dst_link="$(resolveLink "$dst")"
+            debugmsg "normalized_resolved_dst_link='$normalized_resolved_dst_link'"
+
             if [[ "$normalized_src" != "$normalized_resolved_dst_link" ]]; then
                 # deliberately using warnmsg instead of errmsg here:
                 warnmsg "Link '$dst' exists and points to '$normalized_resolved_dst_link' instead of '$normalized_src'"
@@ -285,6 +312,7 @@ linkstall() {
 
 # prompt user to manually install $1 to $2 if necessary
 manual_install() {
+    debugmsg "### manual_install $*"
     if [[ "$#" -ne 2 ]]; then
         errmsg "expected exactly 2 args: src and dst"
         return $ARG_ERR
@@ -318,6 +346,7 @@ manual_install() {
 ##### dotfiles #####
 
 setup_dotfiles() {
+    debugmsg "### setup_dotfiles $*"
     # create required folders
     mkdir -p ~/.config "$CLONES" "$(dirname "$BARE")"
 
