@@ -262,6 +262,19 @@ resolveLink() {
     printf '%s\n' "$result"
 }
 
+# args: path ...
+# `mkdir -p` but with logging
+mkdir_p() {
+    debugmsg "### mkdir_p $*"
+    for path; do
+        path="${path/#'~'/$HOME}" # expand literal tilde
+        test -d "$path" && continue
+        if mkdir -p "$path"; then
+            infomsg "created '$path' (and possibly missing parents)"
+        fi
+    done
+}
+
 # installs $1 to location $2 by creating a symlink
 # unless $2 already exists
 linkstall() {
@@ -304,7 +317,7 @@ linkstall() {
         return $DST_EXISTS_ERR
     fi
 
-    mkdir -p "$(dirname "$dst")" # ensure target folder exists
+    mkdir_p "$(dirname "$dst")" # ensure target folder exists
     # --no-target-directory ensures src is not installed into dst but $(dirname dst)
     ln --symbolic --relative --no-target-directory "$src" "$dst" \
         && infomsg "Installed '$dst'" # || `ln` prints its own errors
@@ -348,7 +361,7 @@ manual_install() {
 setup_dotfiles() {
     debugmsg "### setup_dotfiles $*"
     # create required folders
-    mkdir -p ~/.config "$CLONES" "$(dirname "$BARE")"
+    mkdir_p ~/.config "$CLONES" "$(dirname "$BARE")"
 
     # create bare clone if necessary
     if pushd "$BARE"; then
@@ -444,23 +457,23 @@ setup_home() {
     isTermux && return $PATFORM_ERR
 
     # create data folders
-    mkdir -p ~/Data/{Documents,Videos,Music,Pictures}
+    mkdir_p ~/Data/{Documents,Videos,Music,Pictures}
     linkstall ~/{Data/,}Documents
     linkstall ~/{Data/,}Videos
     linkstall ~/{Data/,}Music
     linkstall ~/{Data/,}Pictures
 
     # create a downloads folder
-    mkdir -p ~/Downloads
+    mkdir_p ~/Downloads
 
     # create a user bin/ folder
-    mkdir -p ~/.local/bin
+    mkdir_p ~/.local/bin
 
     # create a user-fonts folder
     local xdg_data_home
     xdg_data_home="${XDG_DATA_HOME:-$HOME/.local/share}"
-    infomsg "Using '$xdg_data_home' as XDG_DATA_HOME"
-    mkdir -p "$xdg_data_home"/fonts
+    debugmsg "XDG_DATA_HOME='$xdg_data_home'"
+    mkdir_p "$xdg_data_home"/fonts
 
 }
 
