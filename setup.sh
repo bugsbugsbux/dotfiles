@@ -203,7 +203,11 @@ isRepo() {
     d="${d/#'~'/$HOME}" # expand literal tilde
     local status
     if pushd "$d"; then
-        status="$(git rev-parse --is-inside-work-tree 2>/dev/null)$(git rev-parse --is-inside-git-dir 2>/dev/null)"
+        status="$(
+            git rev-parse --is-inside-work-tree 2>/dev/null
+        )$(
+            git rev-parse --is-inside-git-dir 2>/dev/null
+        )"
         popd
         [[ "$status" == *true* ]]
         return #$?
