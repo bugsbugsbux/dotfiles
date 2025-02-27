@@ -433,6 +433,7 @@ setup_dotfiles() {
 # - handler: name of the function which defines the sparse checkout spec and installs the files
 # NOTE: this function assumes PWD is in CLONES # TODO: assert this
 cloneAndHandle() {
+    debugmsg "### cloneAndHandle $*"
     if [[ "$#" -ne 2 ]]; then
         errmsg "expected exactly 2 args: name and handler"
         return $ARG_ERR
@@ -467,9 +468,13 @@ cloneAndHandle() {
 ##### setup home directory #####
 
 setup_home() {
+    debugmsg "### setup_home $*"
 
     # dont do anything on termux
-    isTermux && return $PATFORM_ERR
+    isTermux && {
+        infomsg "Skipping setup_home on platform termux"
+        return $PATFORM_ERR
+    }
 
     # create data folders
     mkdir_p ~/Data/{Documents,Videos,Music,Pictures}
