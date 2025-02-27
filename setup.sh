@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# tags: TODO, NOTE, FIXME, DEBUG
+# tags: TODO, CHECK, NOTE, FIXME, DEBUG
+# add your code in these places: <++>
 
 #disable the unwarranted warnings about unhandled cd/pushd/popd
 # shellcheck disable=SC2164
@@ -89,6 +90,7 @@ main() {
         fatalError $INVOC_AS_ROOT_ERR "Must not run as root!"
     fi
 
+    # check dependencies
     ! type -t git &>/dev/null && \
         fatalError $DEPENDENCY_ERR 'Missing dependency: git'
     ! type -t diff &>/dev/null && \
@@ -140,7 +142,7 @@ main() {
     setup_dotfiles
 }
 
-##### overrides: #####
+##### logging: #####
 
 # check whether logging level is _at least_ ...
 IF_LVL_ERR()   { [[ "$LOGGING_LVL" -gt 0 ]]; }
@@ -170,6 +172,7 @@ debugmsg(){ logmsg -d "Debug: $*"; }
 
 ##### helpers: #####
 
+# instruct the user to do something manually
 # prints to stdout to avoid user-suppression via stderr-redirection
 call_for_action() { echo -e "PLEASE: $*"; }
 
@@ -239,6 +242,7 @@ hasStaged() {
 # target repo is PWD
 hasUntrackedUnignored() {
     debugmsg "### hasUntrackedUnignored $*"
+    # this git command compares HEAD to the index and fails if they differ
     # `ls-files` usually lists all tracked files, but
     # `--other` specifies to only show untracked files
     # `--exclude-standard` except those ignored with gitignore
@@ -279,6 +283,7 @@ mkdir_p() {
     done
 }
 
+# args: src dst
 # installs $1 to location $2 by creating a symlink
 # unless $2 already exists
 linkstall() {
@@ -327,6 +332,7 @@ linkstall() {
         && infomsg "Installed '$dst'" # || `ln` prints its own errors
 }
 
+# args: src dst
 # prompt user to manually install $1 to $2 if necessary
 manual_install() {
     debugmsg "### manual_install $*"
@@ -412,15 +418,20 @@ setup_dotfiles() {
 
     # create sparse clones and install their files
     pushd "$CLONES" && {
+        # CHECK: did you register all handlers here?
         cloneAndHandle {,handler_}etc
         cloneAndHandle {,handler_}shell
         cloneAndHandle {,handler_}nvim
         cloneAndHandle {,handler_}sway
         cloneAndHandle {,handler_}other
+        #<++> register new handler
     popd; }
 }
 
 # args: name handler
+# - name: name of folder in $CLONES
+# - handler: name of the function which defines the sparse checkout spec and installs the files
+# NOTE: this function assumes PWD is in CLONES # TODO: assert this
 cloneAndHandle() {
     if [[ "$#" -ne 2 ]]; then
         errmsg "expected exactly 2 args: name and handler"
@@ -479,13 +490,19 @@ setup_home() {
     debugmsg "XDG_DATA_HOME='$xdg_data_home'"
     mkdir_p "$xdg_data_home"/fonts
 
+    # <++> change how to set up HOME
 }
 
-##### define your dotfile installer handlers
+
+##### define your dotfile installer handlers per topic:
 # 0. dont forget to register handler with setup_dotfiles
-# 1. set the sparse checkout spec
+# 1. a handler must first set the sparse checkout spec
 #   NOTE: sparse patterns shall start with /
-# 2. install the files to their correct locations
+# 2. and then install the files to their correct locations
+#   NOTE: distinguish platforms using the helper functions
+# 3. optional other steps related to given topic of files
+
+# <++> add a new handler
 
 handler_etc() {
     git sparse-checkout set --no-cone /setup.sh \
