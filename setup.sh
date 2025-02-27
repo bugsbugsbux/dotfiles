@@ -138,7 +138,11 @@ main() {
     fi
 
     # invoke subroutines
-    setup_home
+    if [[ "$(type -t setup_home)" != "function" ]]; then
+        errmsg "no function 'setup_home' found"
+    else
+        setup_home
+    fi
     setup_dotfiles
 }
 
