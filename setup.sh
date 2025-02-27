@@ -178,7 +178,7 @@ call_for_action() { echo -e "PLEASE: $*"; }
 
 # args: [exitCode] error message ...
 fatalError() {
-    debugmsg "### fatalError $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     local code=$GENERIC_ERR
     if [[ "$1" == [0-9]* ]]; then
         code="$1"
@@ -189,19 +189,19 @@ fatalError() {
 }
 
 isNixOS() {
-    debugmsg "### isNixOS $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     test -f /etc/lsb-release || return 1
     test "$(grep --max-count=1 --fixed-string DISTRIB_ID /etc/lsb-release | cut -d= -f2)" = "nixos"
 }
 isTermux() {
-    debugmsg "### isTermux $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     test -d /data/data/com.termux/files
 }
 
 # args: [path]
 # check if $1 (or if omitted PWD) is a git repo
 isRepo() {
-    debugmsg "### isRepo $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     local d="${1:-.}" # . if $1 omitted
     d="${d/#'~'/$HOME}" # expand literal tilde
     local status
@@ -221,7 +221,7 @@ isRepo() {
 
 # target repo is PWD
 hasUnstaged() {
-    debugmsg "### hasUnstaged $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     # this git command compares index and workingtree and fails if they differ
     if ! git diff-files --quiet &>/dev/null; then
         infomsg "$PWD has unstaged files"
@@ -231,7 +231,7 @@ hasUnstaged() {
 }
 # target repo is PWD
 hasStaged() {
-    debugmsg "### hasStaged $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     # this git command compares HEAD to the index and fails if they differ
     if ! git diff-index --quiet --cached HEAD &>/dev/null; then
         infomsg "$PWD has staged files"
@@ -241,7 +241,7 @@ hasStaged() {
 }
 # target repo is PWD
 hasUntrackedUnignored() {
-    debugmsg "### hasUntrackedUnignored $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     # this git command compares HEAD to the index and fails if they differ
     # `ls-files` usually lists all tracked files, but
     # `--other` specifies to only show untracked files
@@ -255,7 +255,7 @@ hasUntrackedUnignored() {
 
 # args: path
 normalizePath() {
-    debugmsg "### normalizePath $* #:"
+    debugmsg "### ${FUNCNAME[0]} $* #:"
     local result
     result="$(realpath --canonicalize-missing --logical --physical "$1")"
     logmsg -d "\t$result"
@@ -263,7 +263,7 @@ normalizePath() {
 }
 # args: path
 resolveLink() {
-    debugmsg "### resolveLink $* #:"
+    debugmsg "### ${FUNCNAME[0]} $* #:"
     local result
     result="$(readlink --canonicalize-missing "$1")"
     logmsg -d "\t$result"
@@ -273,7 +273,7 @@ resolveLink() {
 # args: path ...
 # `mkdir -p` but with logging
 mkdir_p() {
-    debugmsg "### mkdir_p $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     for path; do
         path="${path/#'~'/$HOME}" # expand literal tilde
         test -d "$path" && continue
@@ -287,7 +287,7 @@ mkdir_p() {
 # installs $1 to location $2 by creating a symlink
 # unless $2 already exists
 linkstall() {
-    debugmsg "### linkstall $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     if [[ "$#" -ne 2 ]]; then
         errmsg "expected exactly 2 args: src and dst"
         return $ARG_ERR
@@ -335,7 +335,7 @@ linkstall() {
 # args: src dst
 # prompt user to manually install $1 to $2 if necessary
 manual_install() {
-    debugmsg "### manual_install $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     if [[ "$#" -ne 2 ]]; then
         errmsg "expected exactly 2 args: src and dst"
         return $ARG_ERR
@@ -369,7 +369,7 @@ manual_install() {
 ##### dotfiles #####
 
 setup_dotfiles() {
-    debugmsg "### setup_dotfiles $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     # create required folders
     mkdir_p ~/.config "$CLONES" "$(dirname "$BARE")"
 
@@ -433,7 +433,7 @@ setup_dotfiles() {
 # - handler: name of the function which defines the sparse checkout spec and installs the files
 # NOTE: this function assumes PWD is in CLONES # TODO: assert this
 cloneAndHandle() {
-    debugmsg "### cloneAndHandle $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
     if [[ "$#" -ne 2 ]]; then
         errmsg "expected exactly 2 args: name and handler"
         return $ARG_ERR
@@ -468,7 +468,7 @@ cloneAndHandle() {
 ##### setup home directory #####
 
 setup_home() {
-    debugmsg "### setup_home $*"
+    debugmsg "### ${FUNCNAME[0]} $*"
 
     # dont do anything on termux
     isTermux && {
