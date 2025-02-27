@@ -382,6 +382,7 @@ checkoutFiles() {
     git sparse-checkout set --no-cone /setup.sh "$@"
 }
 
+declare -A topic_handlers
 setup_dotfiles() {
     debugmsg "### ${FUNCNAME[0]} $*"
     # create required folders
@@ -438,13 +439,21 @@ setup_dotfiles() {
 
     # create sparse clones and install their files
     pushd "$CLONES" && {
-        # CHECK: did you register all handlers here?
-        cloneAndHandle {,handler_}etc
-        cloneAndHandle {,handler_}shell
-        cloneAndHandle {,handler_}nvim
-        cloneAndHandle {,handler_}sway
-        cloneAndHandle {,handler_}other
-        #<++> register new handler
+        local found_handlers=false
+        for topic in "${!topic_handlers[@]}"; do
+            [[ "$topic" == [[:digit:]]* ]] && { # digit followed by anything
+                errmsg "Skipping topic due to invalid name: $topic"
+                continue
+            }
+            found_handlers=true
+            local handler="${topic_handlers[$topic]}"
+
+            cloneAndHandle "$topic" "$handler"
+
+        done
+        if ! $found_handlers; then
+            warnmsg "found no handlers"
+        fi
     popd; }
 }
 
@@ -594,6 +603,15 @@ handler_other() {
     linkstall {linux,~}/.config/wireplumber
     linkstall {linux,~}/.config/chromium-flags.conf
 }
+
+# <++> assign handlers to a certain TOPIC repo
+topic_handlers=(
+    [etc]=handler_etc
+    [shell]=handler_shell
+    [nvim]=handler_nvim
+    [sway]=handler_sway
+    [other]=handler_other
+)
 
 ##### run this script, unless this file is sourced: #####
 (return &>/dev/null) || main "$@"
