@@ -420,7 +420,7 @@ setup_dotfiles() {
         # REMOTE defaults to $PWD
         if test -z "$REMOTE"; then
             if ! isRepo "$PWD"; then
-                fatalError $OPT_ERR "'$REMOTE' is not a git repository"
+                fatalError $OPT_ERR "failed to fall back to '$PWD' as REMOTE: not a repo"
             fi
             REMOTE="$PWD"
         fi
