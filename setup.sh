@@ -405,6 +405,12 @@ setup_dotfiles() {
             warnmsg "BARE's origin remote seems to be local: '$upstream'"
         fi
 
+        # warn if upstream differs from REMOTE
+        if [[ -n "$REMOTE" && "$upstream" != "$REMOTE" ]]; then
+            warnmsg "Using existing BARE ($BARE); however it's upstream ($upstream) differs"
+            logmsg -w "\tfrom the requested one ($REMOTE)"
+        fi
+
         popd
     else
         # REMOTE defaults to $PWD
