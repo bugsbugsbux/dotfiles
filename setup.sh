@@ -368,6 +368,16 @@ manual_install() {
 
 ##### dotfiles #####
 
+# args: [pattern ...]
+# sparse-checkout with --no-cone, including /setup.sh and warning about certain patterns
+checkoutFiles() {
+    debugmsg "### ${FUNCNAME[0]} $*"
+    for pat; do
+        [[ "$pat" != /* ]] && warnmsg "sparse-checkout pattern '$pat' doesn't start with slash"
+    done
+    git sparse-checkout set --no-cone /setup.sh "$@"
+}
+
 setup_dotfiles() {
     debugmsg "### ${FUNCNAME[0]} $*"
     # create required folders
@@ -510,8 +520,7 @@ setup_home() {
 # <++> add a new handler
 
 handler_etc() {
-    git sparse-checkout set --no-cone /setup.sh \
-        /linux/etc
+    checkoutFiles /linux/etc
 
     if isNixOS; then
         manual_install {linux,}/etc/nixos
@@ -523,7 +532,7 @@ handler_etc() {
 }
 
 handler_shell() {
-    git sparse-checkout set --no-cone /setup.sh \
+    checkoutFiles \
         /linux/etc/profile \
         /linux/{.{bash,input}rc,.{,bash_}profile,.bash_{login,logout,aliases}} \
         /linux/.config/fish
@@ -544,13 +553,12 @@ handler_shell() {
 }
 
 handler_nvim() {
-    git sparse-checkout set --no-cone /setup.sh \
-        /linux/.config/nvim
+    checkoutFiles /linux/.config/nvim
     linkstall {linux,~}/.config/nvim
 }
 
 handler_sway() {
-    git sparse-checkout set --no-cone /setup.sh \
+    checkoutFiles \
         /linux/.config/{sway,tofi} \
         /linux/.config/mako
     linkstall {linux,~}/.config/sway
@@ -559,7 +567,7 @@ handler_sway() {
 }
 
 handler_other() {
-    git sparse-checkout set --no-cone /setup.sh \
+    checkoutFiles \
         /linux/.npmrc \
         /linux/.config/{alacritty,foot,wezterm} \
         /linux/.config/git \
