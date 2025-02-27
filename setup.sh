@@ -574,3 +574,5 @@ handler_other() {
 
 ##### run this script, unless this file is sourced: #####
 (return &>/dev/null) || main "$@"
+
+# vim: tw=0 cc=100
