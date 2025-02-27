@@ -9,12 +9,9 @@
 # shellcheck disable=SC2120
 
 # TODO:
-# - echo does not have -- option; use printf instead
-# - only warn of existing files when they are not links pointing to the correct location
-# - manual_install:
-#   + only inform user if file does not exist _or differs_
-#   + disallow arguments of type directory (othewise can't diff them)
-# - abort if no diffutils (diff) found
+# - split this script into setup-utils.sh and setup.sh where
+#   setup.sh loads the utils and then defines user code
+# - rename /linux/ tree to 'any'
 
 DOCSTRING=\
 'Usage: ./setup.sh [opts]
@@ -39,7 +36,7 @@ Concept:
   |            A clone of BARE using sparse-checkout to restrict the
   |            files to a certain topic. Used for working on these.
 +------------+ Usually development happens on branch "dev"; then BARE
-|CLONES/topic| is fetched, "dev" rebased onto it, "tmp" used to compose
+|CLONES/TOPIC| is fetched, "dev" rebased onto it, "tmp" used to compose
 +------------+ the history using cherry-picking, and finally "master"
   ^            pulls "tmp" using merge --no-ff and pushes it to BARE.
   |
@@ -322,8 +319,10 @@ linkstall() {
         elif [[ -f "$src" && -f "$dst" ]] || [[ -d "$src" && -d "$dst" ]]; then
             # diff can also compare folders
             if diff --recursive "$src" "$dst" &>/dev/null
-            then warnmsg "'$dst' exists, but does not differ from '$src'"
-            else errmsg "destination exists and differs from source; show with:\ndiff -r '$src' '$dst'"
+            then warnmsg "'$dst' exists (not a link), but does not differ from '$src'"
+            else
+                errmsg "destination exists and differs from source; show with:"
+                logmsg -e "\tdiff -r '$src' '$dst'"
             fi; return $DST_EXISTS_ERR
         fi
         errmsg "Cannot install '$src' to existing location '$dst'"
@@ -370,8 +369,6 @@ manual_install() {
     call_for_action "$code"
 }
 
-##### dotfiles #####
-
 # args: [pattern ...]
 # sparse-checkout with --no-cone, including /setup.sh and warning about certain patterns
 checkoutFiles() {
@@ -381,6 +378,8 @@ checkoutFiles() {
     done
     git sparse-checkout set --no-cone /setup.sh "$@"
 }
+
+##### dotfiles #####
 
 declare -A topic_handlers
 setup_dotfiles() {
@@ -460,7 +459,6 @@ setup_dotfiles() {
 # args: name handler
 # - name: name of folder in $CLONES
 # - handler: name of the function which defines the sparse checkout spec and installs the files
-# NOTE: this function assumes PWD is in CLONES # TODO: assert this
 cloneAndHandle() {
     debugmsg "### ${FUNCNAME[0]} $*"
     if [[ "$#" -ne 2 ]]; then
@@ -529,12 +527,16 @@ setup_home() {
 
 
 ##### define your dotfile installer handlers per topic:
-# 0. dont forget to register handler with setup_dotfiles
-# 1. a handler must first set the sparse checkout spec
-#   NOTE: sparse patterns shall start with /
-# 2. and then install the files to their correct locations
-#   NOTE: distinguish platforms using the helper functions
-# 3. optional other steps related to given topic of files
+# A "handler" is a function invoked in a CLONE/TOPIC repo to install the files of this topic
+# How to write a handler:
+# 0. add the handler's name as value to a new key TOPIC in dictionary topic_handlers
+# 1. checkout the files of the topic (using sparse-checkout patterns) using `checkoutFiles`
+#   NOTE: the ptterns shall start with / (indicating the repository root)
+#   NOTE: don't distinguish platforms yet
+# 2. install these files to their correct locations using `linkstall` or `manual_install`
+#   NOTE: distinguish platforms using isTermux, isNixOS
+# 3. optional other actions related to given topic of files
+#   NOTE: to create directories use `mkdir_p` (logs its activities)
 
 # <++> add a new handler
 
