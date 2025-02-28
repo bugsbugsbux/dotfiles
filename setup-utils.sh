@@ -390,7 +390,7 @@ setup_dotfiles() {
     # create bare clone if necessary
     if pushd "$BARE"; then
         if ! isRepo "$BARE" || [ "$(git rev-parse --is-bare-repository)" = false ]; then
-            errmsg "'$BARE' is not a bare repo"
+            errmsg "failed to reuse folder '$BARE' as BARE: not a repo or not bare"
             return $OPT_ERR
         fi
 
