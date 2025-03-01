@@ -127,13 +127,6 @@ main() {
         fi
     done
 
-    # unless debugging suppress popd & pushd output
-    if [[ "$LOGGING_LVL" -lt 4 ]]; then
-        pushd() { command pushd "$@"; } >/dev/null
-        # shellcheck disable=SC2120
-        popd() { command popd "$@"; } >/dev/null
-    fi
-
     # invoke subroutines
     if [[ "$(type -t setup_home)" != "function" ]]; then
         errmsg "no function 'setup_home' found"
@@ -187,6 +180,23 @@ fatalError() {
     fi
     stderr "FATAL ERROR! $*" >&2
     exit "$code"
+}
+
+pushd() {
+    if command pushd "$@" &>/dev/null; then
+        IF_LVL_DEBUG && debugmsg "cd $PWD"
+    else
+        IF_LVL_DEBUG && debugmsg "couldn't cd to $*";
+        return 1
+    fi
+}
+popd() {
+    if command popd "$@" &>/dev/null; then
+        IF_LVL_DEBUG && debugmsg "cd back to $PWD"
+    else
+        IF_LVL_DEBUG && debugmsg "couldn't cd back to $*"
+        return 1
+    fi
 }
 
 isNixOS() {
