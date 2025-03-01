@@ -430,7 +430,7 @@ setup_dotfiles() {
                 "to change this use: git remote set-url origin URL"
         fi
 
-        git clone --quiet --bare --no-local "$REMOTE" "$BARE" || {
+        git clone --quiet --bare --no-local "$REMOTE" "$BARE" 2>/dev/null || {
             errmsg "Could not create the bare clone '$BARE' of '$REMOTE'"
             return 1 # TODO: global exit code
         }
@@ -472,8 +472,8 @@ cloneAndHandle() {
         return $ARG_ERR
     }
 
-    git clone --quiet "$BARE" "$name"
-    pushd "$name" && {
+    git clone --quiet "$BARE" "$name" 2>/dev/null
+    if pushd "$name"; then
         if isRepo; then
             # ensure has dev branch
             git branch dev &>/dev/null
@@ -487,9 +487,14 @@ cloneAndHandle() {
             # run handler
             $handler
         else
-            errmsg "Failed to create clone '$BARE/$name' [exists, not a repo]"
+            errmsg "Failed to create or reuse clone '$BARE/$name' [directory, not a repo]"
+            return $OPT_ERR
         fi
-    popd; }
+        popd
+    else
+        errmsg "Failed to create clone '$BARE/$name' [exists, not a directory]"
+        return $OPT_ERR
+    fi
 }
 
 # vim: tw=0 cc=100
