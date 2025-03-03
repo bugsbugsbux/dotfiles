@@ -482,7 +482,7 @@ cloneAndHandle() {
         return $ARG_ERR
     }
 
-    git clone --quiet "$BARE" "$name" 2>/dev/null
+    ! test -e "$name" && git clone --quiet "$BARE" "$name" 2>/dev/null
     if pushd "$name"; then
         if isRepo; then
             # ensure has dev branch
@@ -502,8 +502,8 @@ cloneAndHandle() {
         fi
         popd
     else
-        errmsg "Failed to create clone '$BARE/$name' [exists, not a directory]"
-        return $OPT_ERR
+        errmsg "Failed to create clone '$BARE/$name'"
+        return $OPT_ERR # admittedly could also be network issue
     fi
 }
 
