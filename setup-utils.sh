@@ -231,7 +231,7 @@ cloneAndHandle() {
             git branch dev &>/dev/null
             # try to switch to branch dev
             if ! hasUntrackedUnignored && ! hasUnstaged && ! hasStaged; then
-                git co --quiet -b dev &>/dev/null
+                git checkout --quiet -b dev &>/dev/null
             # else # no need to inform user here
             fi
             # reset sparse checkout spec
