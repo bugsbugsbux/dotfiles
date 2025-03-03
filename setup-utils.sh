@@ -422,9 +422,7 @@ linkstall() {
         if [[ -L "$dst" ]]; then # its a link:
             local normalized_src normalized_resolved_dst_link
             normalized_src="$(normalizePath "$src")"
-            debugmsg "normalized_src='$normalized_src'"
             normalized_resolved_dst_link="$(resolveLink "$dst")"
-            debugmsg "normalized_resolved_dst_link='$normalized_resolved_dst_link'"
 
             if [[ "$normalized_src" != "$normalized_resolved_dst_link" ]]; then
                 # deliberately using warnmsg instead of errmsg here:
