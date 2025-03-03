@@ -1,17 +1,28 @@
 #!/usr/bin/env bash
 
 # tags: TODO, CHECK, NOTE, FIXME, DEBUG
-# add your code in these places: <++>
+
+# structure of this script:
+# 1. error codes
+# 2. docstring (--help)
+# 3. cloneAndHandle preceded by its dependencies
+# 4. setup_dotfiles preceded by its dependencies
+# 5. main preceded by its dependencies
+# 6. functions only used in handlers each preceded by their dependencies
 
 #disable the unwarranted warnings about unhandled cd/pushd/popd
 # shellcheck disable=SC2164
 #disable "arguments mentioned never passed" warning caused by my debug messages
 # shellcheck disable=SC2120
 
-# TODO:
-# - split this script into setup-utils.sh and setup.sh where
-#   setup.sh loads the utils and then defines user code
-# - rename /linux/ tree to 'any'
+GENERIC_ERR=1
+INVOC_AS_ROOT_ERR=2     # this script must not be invoked as root
+SCRIPT_ARG_ERR=3        # argument error when invoking this script
+ARG_ERR=4               # argument error when invoking a function
+DST_EXISTS_ERR=5        # trying to install to existing location
+OPT_ERR=6               # invalid global config value
+PATFORM_ERR=7           # action not possible on current platform
+DEPENDENCY_ERR=8        # missing dependency
 
 DOCSTRING=\
 'Usage: ./setup.sh [opts]
@@ -61,82 +72,12 @@ Options:
                 4 print everything including debug infos
 '
 
-##### exit/return codes #####
-GENERIC_ERR=1
-INVOC_AS_ROOT_ERR=2     # this script must not be invoked as root
-SCRIPT_ARG_ERR=3        # argument error when invoking this script
-ARG_ERR=4               # argument error when invoking a function
-DST_EXISTS_ERR=5        # trying to install to existing location
-OPT_ERR=6               # invalid global config value
-PATFORM_ERR=7           # action not possible on current platform
-DEPENDENCY_ERR=8        # missing dependency
-
-##### config and invocation of this script #####
-
 REMOTE= # setup_dotfiles uses $PWD as default (see: setup_dotfiles)
 BARE="$HOME/repos/dotfiles.git"
 CLONES="$HOME/.dot"
-
 LOGGING_LVL=2 # for meaning see DOCSTRING
+
 isValidLoggingLevel() { [[ "$1" == [0-4] ]]; }
-
-main() {
-    # cannot log here since logging level still unknown
-
-    if (( "$UID" == 0 )); then
-        fatalError $INVOC_AS_ROOT_ERR "Must not run as root!"
-    fi
-
-    # check dependencies
-    ! type -t git &>/dev/null && \
-        fatalError $DEPENDENCY_ERR 'Missing dependency: git'
-    ! type -t diff &>/dev/null && \
-        fatalError $DEPENDENCY_ERR 'Missing dependency: diff (from diffutils package)'
-
-    # handle arguments
-    local currentOpt
-    for arg; do
-        if test -n "$currentOpt"; then
-            case "$currentOpt" in
-                -*) fatalError $SCRIPT_ARG_ERR "Missing option value!" ;;
-                'remote') REMOTE="$arg"; currentOpt= ;;
-                'bare') BARE="$arg"; currentOpt= ;;
-                'clones') CLONES="$arg"; currentOpt= ;;
-                'logging') LOGGING_LVL="$arg"; currentOpt=
-                    isValidLoggingLevel "$LOGGING_LVL" \
-                        || fatalError $SCRIPT_ARG_ERR "Invalid logging level"
-                ;;
-                *) fatalError $GENERIC_ERR "unreachable" ;;
-            esac
-        else
-            case "$arg" in
-                '-h'|'--help') echo -e "$DOCSTRING"; exit 0 ;;
-                '-r'|'--remote') currentOpt=remote ;;
-                -r=*|--remote=*) REMOTE="${arg#*=}";;
-                '-b'|'--bare') currentOpt=bare ;;
-                -b=*|--bare=*) BARE="${arg#*=}";;
-                '-c'|'--clones') currentOpt=clones ;;
-                -c=*|--clones=*) CLONES="${arg#*=}";;
-                '-l'|'--logging-level') currentOpt=logging ;;
-                -l=*|--logging-level=*) LOGGING_LVL="${arg#*=}"
-                    isValidLoggingLevel "$LOGGING_LVL" \
-                        || fatalError $SCRIPT_ARG_ERR "Invalid logging level"
-                ;;
-                *) fatalError $SCRIPT_ARG_ERR "Unknown argument '$arg'" ;;
-            esac
-        fi
-    done
-
-    # invoke subroutines
-    if [[ "$(type -t setup_home)" != "function" ]]; then
-        errmsg "no function 'setup_home' found"
-    else
-        setup_home
-    fi
-    setup_dotfiles
-}
-
-##### logging: #####
 
 # check whether logging level is _at least_ ...
 IF_LVL_ERR()   { [[ "$LOGGING_LVL" -gt 0 ]]; }
@@ -164,12 +105,6 @@ warnmsg() { logmsg -w "Warn: $*"; }
 infomsg() { logmsg -i "Info: $*"; }
 debugmsg(){ logmsg -d "Debug: $*"; }
 
-##### helpers: #####
-
-# instruct the user to do something manually
-# prints to stdout to avoid user-suppression via stderr-redirection
-call_for_action() { echo -e "PLEASE: $*"; }
-
 # args: [exitCode] error message ...
 fatalError() {
     debugmsg "### ${FUNCNAME[0]} $*"
@@ -182,6 +117,21 @@ fatalError() {
     exit "$code"
 }
 
+
+# args: path ...
+# `mkdir -p` but with logging
+mkdir_p() {
+    debugmsg "### ${FUNCNAME[0]} $*"
+    for path; do
+        path="${path/#'~'/$HOME}" # expand literal tilde
+        test -d "$path" && continue
+        if mkdir -p "$path"; then
+            infomsg "created '$path' (and possibly missing parents)"
+        fi
+    done
+}
+
+# `pushd` with logging
 pushd() {
     if command pushd "$@" &>/dev/null; then
         IF_LVL_DEBUG && debugmsg "cd $PWD"
@@ -190,6 +140,8 @@ pushd() {
         return 1
     fi
 }
+
+# `popd` with logging
 popd() {
     if command popd "$@" &>/dev/null; then
         IF_LVL_DEBUG && debugmsg "cd back to $PWD"
@@ -197,16 +149,6 @@ popd() {
         IF_LVL_DEBUG && debugmsg "couldn't cd back to $*"
         return 1
     fi
-}
-
-isNixOS() {
-    debugmsg "### ${FUNCNAME[0]} $*"
-    test -f /etc/lsb-release || return 1
-    test "$(grep --max-count=1 --fixed-string DISTRIB_ID /etc/lsb-release | cut -d= -f2)" = "nixos"
-}
-isTermux() {
-    debugmsg "### ${FUNCNAME[0]} $*"
-    test -d /data/data/com.termux/files
 }
 
 # args: [path]
@@ -231,26 +173,6 @@ isRepo() {
 }
 
 # target repo is PWD
-hasUnstaged() {
-    debugmsg "### ${FUNCNAME[0]} $*"
-    # this git command compares index and workingtree and fails if they differ
-    if ! git diff-files --quiet &>/dev/null; then
-        infomsg "$PWD has unstaged files"
-        return 0
-    fi
-    return 1
-}
-# target repo is PWD
-hasStaged() {
-    debugmsg "### ${FUNCNAME[0]} $*"
-    # this git command compares HEAD to the index and fails if they differ
-    if ! git diff-index --quiet --cached HEAD &>/dev/null; then
-        infomsg "$PWD has staged files"
-        return 0
-    fi
-    return 1
-}
-# target repo is PWD
 hasUntrackedUnignored() {
     debugmsg "### ${FUNCNAME[0]} $*"
     # this git command compares HEAD to the index and fails if they differ
@@ -264,134 +186,73 @@ hasUntrackedUnignored() {
     return 1
 }
 
-# args: path
-normalizePath() {
-    debugmsg "### ${FUNCNAME[0]} $* #:"
-    local result
-    result="$(realpath --canonicalize-missing --logical --physical "$1")"
-    logmsg -d "\t$result"
-    printf '%s\n' "$result"
-}
-# args: path
-resolveLink() {
-    debugmsg "### ${FUNCNAME[0]} $* #:"
-    local result
-    result="$(readlink --canonicalize-missing "$1")"
-    logmsg -d "\t$result"
-    printf '%s\n' "$result"
-}
-
-# args: path ...
-# `mkdir -p` but with logging
-mkdir_p() {
+# target repo is PWD
+hasUnstaged() {
     debugmsg "### ${FUNCNAME[0]} $*"
-    for path; do
-        path="${path/#'~'/$HOME}" # expand literal tilde
-        test -d "$path" && continue
-        if mkdir -p "$path"; then
-            infomsg "created '$path' (and possibly missing parents)"
-        fi
-    done
+    # this git command compares index and workingtree and fails if they differ
+    if ! git diff-files --quiet &>/dev/null; then
+        infomsg "$PWD has unstaged files"
+        return 0
+    fi
+    return 1
 }
 
-# args: src dst
-# installs $1 to location $2 by creating a symlink
-# unless $2 already exists
-linkstall() {
+# target repo is PWD
+hasStaged() {
+    debugmsg "### ${FUNCNAME[0]} $*"
+    # this git command compares HEAD to the index and fails if they differ
+    if ! git diff-index --quiet --cached HEAD &>/dev/null; then
+        infomsg "$PWD has staged files"
+        return 0
+    fi
+    return 1
+}
+
+# args: name handler
+# - name: name of folder in $CLONES
+# - handler: name of the function which defines the sparse checkout spec and installs the files
+cloneAndHandle() {
     debugmsg "### ${FUNCNAME[0]} $*"
     if [[ "$#" -ne 2 ]]; then
-        errmsg "expected exactly 2 args: src and dst"
+        errmsg "expected exactly 2 args: name and handler"
         return $ARG_ERR
     fi
-    local src dst
-    src="${1/#'~'/$HOME}" # expand literal tilde
-    dst="${2/#'~'/$HOME}" # expand literal tilde
-    if [[ ! -e "$src" ]]; then
-        errmsg "'$src' does not exist!"
+    local name="$1"
+    local handler="$2"
+    declare -F "$handler" &>/dev/null || {
+        errmsg "Unknown handler '$handler'"
         return $ARG_ERR
-    fi
+    }
 
-    if [[ -e "$dst" ]]; then
-        if [[ -L "$dst" ]]; then # its a link:
-            local normalized_src normalized_resolved_dst_link
-            normalized_src="$(normalizePath "$src")"
-            debugmsg "normalized_src='$normalized_src'"
-            normalized_resolved_dst_link="$(resolveLink "$dst")"
-            debugmsg "normalized_resolved_dst_link='$normalized_resolved_dst_link'"
-
-            if [[ "$normalized_src" != "$normalized_resolved_dst_link" ]]; then
-                # deliberately using warnmsg instead of errmsg here:
-                warnmsg "Link '$dst' exists and points to '$normalized_resolved_dst_link' instead of '$normalized_src'"
-                return $DST_EXISTS_ERR
+    ! test -e "$name" && git clone --quiet "$BARE" "$name" 2>/dev/null
+    if pushd "$name"; then
+        if isRepo; then
+            # ensure has dev branch
+            git branch dev &>/dev/null
+            # try to switch to branch dev
+            if ! hasUntrackedUnignored && ! hasUnstaged && ! hasStaged; then
+                git co --quiet -b dev &>/dev/null
+            # else # no need to inform user here
             fi
-            infomsg "Skipping to reinstall '$dst'"
-            return 0
-        elif [[ -f "$src" && -f "$dst" ]] || [[ -d "$src" && -d "$dst" ]]; then
-            # diff can also compare folders
-            if diff --recursive "$src" "$dst" &>/dev/null
-            then warnmsg "'$dst' exists (not a link), but does not differ from '$src'"
-            else
-                errmsg "destination exists and differs from source; show with:"
-                logmsg -e "\tdiff -r '$src' '$dst'"
-            fi; return $DST_EXISTS_ERR
+            # reset sparse checkout spec
+            git sparse-checkout disable
+            # run handler
+            $handler
+        else
+            errmsg "Failed to create or reuse clone '$BARE/$name' [directory, not a repo]"
+            return $OPT_ERR
         fi
-        errmsg "Cannot install '$src' to existing location '$dst'"
-        return $DST_EXISTS_ERR
+        popd
+    else
+        errmsg "Failed to create clone '$BARE/$name'"
+        return $OPT_ERR # admittedly could also be network issue
     fi
-
-    mkdir_p "$(dirname "$dst")" # ensure target folder exists
-    # --no-target-directory ensures src is not installed into dst but $(dirname dst)
-    ln --symbolic --relative --no-target-directory "$src" "$dst" \
-        && infomsg "Installed '$dst'" # || `ln` prints its own errors
 }
 
-# args: src dst
-# prompt user to manually install $1 to $2 if necessary
-manual_install() {
-    debugmsg "### ${FUNCNAME[0]} $*"
-    if [[ "$#" -ne 2 ]]; then
-        errmsg "expected exactly 2 args: src and dst"
-        return $ARG_ERR
-    fi
-    local src dst
-    src="${1/#'~'/$HOME}" # expand literal tilde
-    dst="${2/#'~'/$HOME}" # expand literal tilde
-    if [[ ! -e "$src" ]]; then
-        errmsg "'$src' does not exist"
-        return $ARG_ERR
-    fi
-
-    local code="mkdir -p \"\$(dirname '$dst')\" && cp -LTR '$src' '$dst'"
-    if [[ -e "$dst" ]]; then
-        if [[ -f "$src" && -f "$dst" ]] \
-        || [[ -d "$src" && -d "$dst" ]]; # diff can also compare folders:
-        then
-            if diff --recursive "$src" "$dst" &>/dev/null; then
-                infomsg "Skipping to reinstall '$dst': doesn't differ from '$src'"
-                return 0
-            fi
-        fi
-        # shellcheck disable=SC2016
-        call_for_action "$code # HOWEVER:\n\t#"\
-            'location exists and differs from source; use `diff -r` to compare'
-        return $DST_EXISTS_ERR
-    fi
-    call_for_action "$code"
-}
-
-# args: [pattern ...]
-# sparse-checkout with --no-cone, including /setup.sh and warning about certain patterns
-checkoutFiles() {
-    debugmsg "### ${FUNCNAME[0]} $*"
-    for pat; do
-        [[ "$pat" != /* ]] && warnmsg "sparse-checkout pattern '$pat' doesn't start with slash"
-    done
-    git sparse-checkout set --no-cone /setup.sh "$@"
-}
-
-##### dotfiles #####
-
+# maps name of topic (used as folder name) to function name of handler which is called in the clone
+# to install the checked out files to their correct locations
 declare -A topic_handlers
+
 setup_dotfiles() {
     debugmsg "### ${FUNCNAME[0]} $*"
     # create required folders
@@ -466,45 +327,188 @@ setup_dotfiles() {
     popd; }
 }
 
-# args: name handler
-# - name: name of folder in $CLONES
-# - handler: name of the function which defines the sparse checkout spec and installs the files
-cloneAndHandle() {
+main() {
+    # cannot log here since logging level still unknown
+
+    if (( "$UID" == 0 )); then
+        fatalError $INVOC_AS_ROOT_ERR "Must not run as root!"
+    fi
+
+    # check dependencies
+    ! type -t git &>/dev/null && \
+        fatalError $DEPENDENCY_ERR 'Missing dependency: git'
+    ! type -t diff &>/dev/null && \
+        fatalError $DEPENDENCY_ERR 'Missing dependency: diff (from diffutils package)'
+
+    # handle arguments
+    local currentOpt
+    for arg; do
+        if test -n "$currentOpt"; then
+            case "$currentOpt" in
+                -*) fatalError $SCRIPT_ARG_ERR "Missing option value!" ;;
+                'remote') REMOTE="$arg"; currentOpt= ;;
+                'bare') BARE="$arg"; currentOpt= ;;
+                'clones') CLONES="$arg"; currentOpt= ;;
+                'logging') LOGGING_LVL="$arg"; currentOpt=
+                    isValidLoggingLevel "$LOGGING_LVL" \
+                        || fatalError $SCRIPT_ARG_ERR "Invalid logging level"
+                ;;
+                *) fatalError $GENERIC_ERR "unreachable" ;;
+            esac
+        else
+            case "$arg" in
+                '-h'|'--help') echo -e "$DOCSTRING"; exit 0 ;;
+                '-r'|'--remote') currentOpt=remote ;;
+                -r=*|--remote=*) REMOTE="${arg#*=}";;
+                '-b'|'--bare') currentOpt=bare ;;
+                -b=*|--bare=*) BARE="${arg#*=}";;
+                '-c'|'--clones') currentOpt=clones ;;
+                -c=*|--clones=*) CLONES="${arg#*=}";;
+                '-l'|'--logging-level') currentOpt=logging ;;
+                -l=*|--logging-level=*) LOGGING_LVL="${arg#*=}"
+                    isValidLoggingLevel "$LOGGING_LVL" \
+                        || fatalError $SCRIPT_ARG_ERR "Invalid logging level"
+                ;;
+                *) fatalError $SCRIPT_ARG_ERR "Unknown argument '$arg'" ;;
+            esac
+        fi
+    done
+
+    # invoke subroutines
+    if [[ "$(type -t setup_home)" != "function" ]]; then
+        errmsg "no function 'setup_home' found"
+    else
+        setup_home
+    fi
+    setup_dotfiles
+}
+
+# args: path
+normalizePath() {
+    debugmsg "### ${FUNCNAME[0]} $* #:"
+    local result
+    result="$(realpath --canonicalize-missing --logical --physical "$1")"
+    logmsg -d "\t$result"
+    printf '%s\n' "$result"
+}
+
+# args: path
+resolveLink() {
+    debugmsg "### ${FUNCNAME[0]} $* #:"
+    local result
+    result="$(readlink --canonicalize-missing "$1")"
+    logmsg -d "\t$result"
+    printf '%s\n' "$result"
+}
+
+# args: src dst
+# installs $1 to location $2 by creating a symlink
+# unless $2 already exists
+linkstall() {
     debugmsg "### ${FUNCNAME[0]} $*"
     if [[ "$#" -ne 2 ]]; then
-        errmsg "expected exactly 2 args: name and handler"
+        errmsg "expected exactly 2 args: src and dst"
         return $ARG_ERR
     fi
-    local name="$1"
-    local handler="$2"
-    declare -F "$handler" &>/dev/null || {
-        errmsg "Unknown handler '$handler'"
+    local src dst
+    src="${1/#'~'/$HOME}" # expand literal tilde
+    dst="${2/#'~'/$HOME}" # expand literal tilde
+    if [[ ! -e "$src" ]]; then
+        errmsg "'$src' does not exist!"
         return $ARG_ERR
-    }
+    fi
 
-    ! test -e "$name" && git clone --quiet "$BARE" "$name" 2>/dev/null
-    if pushd "$name"; then
-        if isRepo; then
-            # ensure has dev branch
-            git branch dev &>/dev/null
-            # try to switch to branch dev
-            if ! hasUntrackedUnignored && ! hasUnstaged && ! hasStaged; then
-                git co --quiet -b dev &>/dev/null
-            # else # no need to inform user here
+    if [[ -e "$dst" ]]; then
+        if [[ -L "$dst" ]]; then # its a link:
+            local normalized_src normalized_resolved_dst_link
+            normalized_src="$(normalizePath "$src")"
+            debugmsg "normalized_src='$normalized_src'"
+            normalized_resolved_dst_link="$(resolveLink "$dst")"
+            debugmsg "normalized_resolved_dst_link='$normalized_resolved_dst_link'"
+
+            if [[ "$normalized_src" != "$normalized_resolved_dst_link" ]]; then
+                # deliberately using warnmsg instead of errmsg here:
+                warnmsg "Link '$dst' exists and points to '$normalized_resolved_dst_link' instead of '$normalized_src'"
+                return $DST_EXISTS_ERR
             fi
-            # reset sparse checkout spec
-            git sparse-checkout disable
-            # run handler
-            $handler
-        else
-            errmsg "Failed to create or reuse clone '$BARE/$name' [directory, not a repo]"
-            return $OPT_ERR
+            infomsg "Skipping to reinstall '$dst'"
+            return 0
+        elif [[ -f "$src" && -f "$dst" ]] || [[ -d "$src" && -d "$dst" ]]; then
+            # diff can also compare folders
+            if diff --recursive "$src" "$dst" &>/dev/null
+            then warnmsg "'$dst' exists (not a link), but does not differ from '$src'"
+            else
+                errmsg "destination exists and differs from source; show with:"
+                logmsg -e "\tdiff -r '$src' '$dst'"
+            fi; return $DST_EXISTS_ERR
         fi
-        popd
-    else
-        errmsg "Failed to create clone '$BARE/$name'"
-        return $OPT_ERR # admittedly could also be network issue
+        errmsg "Cannot install '$src' to existing location '$dst'"
+        return $DST_EXISTS_ERR
     fi
+
+    mkdir_p "$(dirname "$dst")" # ensure target folder exists
+    # --no-target-directory ensures src is not installed into dst but $(dirname dst)
+    ln --symbolic --relative --no-target-directory "$src" "$dst" \
+        && infomsg "Installed '$dst'" # || `ln` prints its own errors
+}
+
+# instruct the user to do something manually
+# prints to stdout to avoid user-suppression via stderr-redirection
+call_for_action() { echo -e "PLEASE: $*"; }
+
+# args: src dst
+# prompt user to manually install $1 to $2 if necessary
+manual_install() {
+    debugmsg "### ${FUNCNAME[0]} $*"
+    if [[ "$#" -ne 2 ]]; then
+        errmsg "expected exactly 2 args: src and dst"
+        return $ARG_ERR
+    fi
+    local src dst
+    src="${1/#'~'/$HOME}" # expand literal tilde
+    dst="${2/#'~'/$HOME}" # expand literal tilde
+    if [[ ! -e "$src" ]]; then
+        errmsg "'$src' does not exist"
+        return $ARG_ERR
+    fi
+
+    local code="mkdir -p \"\$(dirname '$dst')\" && cp -LTR '$src' '$dst'"
+    if [[ -e "$dst" ]]; then
+        if [[ -f "$src" && -f "$dst" ]] \
+        || [[ -d "$src" && -d "$dst" ]]; # diff can also compare folders:
+        then
+            if diff --recursive "$src" "$dst" &>/dev/null; then
+                infomsg "Skipping to reinstall '$dst': doesn't differ from '$src'"
+                return 0
+            fi
+        fi
+        # shellcheck disable=SC2016
+        call_for_action "$code # HOWEVER:\n\t#"\
+            'location exists and differs from source; use `diff -r` to compare'
+        return $DST_EXISTS_ERR
+    fi
+    call_for_action "$code"
+}
+
+# args: [pattern ...]
+# sparse-checkout with --no-cone, including /setup.sh and warning about certain patterns
+checkoutFiles() {
+    debugmsg "### ${FUNCNAME[0]} $*"
+    for pat; do
+        [[ "$pat" != /* ]] && warnmsg "sparse-checkout pattern '$pat' doesn't start with slash"
+    done
+    git sparse-checkout set --no-cone /setup.sh "$@"
+}
+
+isNixOS() {
+    debugmsg "### ${FUNCNAME[0]} $*"
+    test -f /etc/lsb-release || return 1
+    test "$(grep --max-count=1 --fixed-string DISTRIB_ID /etc/lsb-release | cut -d= -f2)" = "nixos"
+}
+
+isTermux() {
+    debugmsg "### ${FUNCNAME[0]} $*"
+    test -d /data/data/com.termux/files
 }
 
 # vim: tw=0 cc=100
