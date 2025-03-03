@@ -303,7 +303,7 @@ setup_dotfiles() {
 
         git clone --quiet --bare --no-local "$REMOTE" "$BARE" 2>/dev/null || {
             errmsg "Could not create the bare clone '$BARE' of '$REMOTE'"
-            return 1 # TODO: global exit code
+            return $OPT_ERR # admittedly could also be network issue
         }
     fi
 
