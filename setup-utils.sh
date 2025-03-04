@@ -135,6 +135,7 @@ mkdir_p() {
 pushd() {
     if command pushd "$@" &>/dev/null; then
         IF_LVL_DEBUG && debugmsg "cd $PWD"
+        return 0
     else
         IF_LVL_DEBUG && debugmsg "couldn't cd to $*";
         return 1
@@ -143,10 +144,11 @@ pushd() {
 
 # `popd` with logging
 popd() {
-    if command popd "$@" &>/dev/null; then
+    if command popd $* &>/dev/null; then
         IF_LVL_DEBUG && debugmsg "cd back to $PWD"
+        return 0
     else
-        IF_LVL_DEBUG && debugmsg "couldn't cd back to $*"
+        IF_LVL_DEBUG && debugmsg "couldn't cd back to $OLDPWD"
         return 1
     fi
 }
