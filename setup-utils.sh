@@ -480,7 +480,7 @@ manual_install() {
         return $ARG_ERR
     fi
 
-    local code="mkdir -p \"\$(dirname '$dst')\" && cp -LTR '$src' '$dst'"
+    local code="mkdir -p \"\$(dirname '$dst')\" && cp -LTR '$PWD/$src' '$dst'"
     if [[ -e "$dst" ]]; then
         if [[ -f "$src" && -f "$dst" ]] \
         || [[ -d "$src" && -d "$dst" ]]; # diff can also compare folders:
@@ -492,7 +492,8 @@ manual_install() {
         fi
         # shellcheck disable=SC2016
         call_for_action "$code # HOWEVER:\n\t#"\
-            'location exists and differs from source; use `diff -r` to compare'
+            'location exists and differs from source; compare with \n\t#'\
+            "diff -r '$PWD/$src' '$dst'"
         return $DST_EXISTS_ERR
     fi
     call_for_action "$code"
