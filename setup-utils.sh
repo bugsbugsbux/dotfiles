@@ -297,6 +297,7 @@ setup_dotfiles() {
             if ! isRepo "$PWD"; then
                 fatalError $OPT_ERR "failed to fall back to '$PWD' as REMOTE: not a repo"
             fi
+            warnmsg "falling back to current working directory ($PWD) as REMOTE"
             REMOTE="$PWD"
         fi
         # warn of local origin
