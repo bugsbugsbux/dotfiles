@@ -395,7 +395,7 @@ main() {
 
     # invoke subroutines
     if [[ "$(type -t setup_home)" != "function" ]]; then
-        errmsg "no function 'setup_home' found"
+        warnmsg "no function 'setup_home' found"
     else
         setup_home
     fi
