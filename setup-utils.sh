@@ -303,10 +303,15 @@ setup_dotfiles() {
                 "to change this use: git remote set-url origin URL"
         fi
 
-        git clone --quiet --bare --no-local "$REMOTE" "$BARE" 2>/dev/null || {
-            errmsg "Could not create the bare clone '$BARE' of '$REMOTE'"
-            return $OPT_ERR # admittedly could also be network issue
-        }
+        if ! test -e "$BARE"; then
+            git clone --quiet --bare --no-local "$REMOTE" "$BARE" 2>/dev/null || {
+                errmsg "Could not create the bare clone '$BARE' of '$REMOTE'"
+                return $OPT_ERR # admittedly could also be network issue
+            }
+        elif ! isRepo "$BARE"; then
+            errmsg "Failed to reuse '$BARE' as BARE"
+            return $OPT_ERR
+        fi
     fi
 
     # create sparse clones and install their files
