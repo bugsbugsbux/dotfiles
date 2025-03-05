@@ -262,7 +262,9 @@ setup_dotfiles() {
 
     # create bare clone if necessary
     if pushd "$BARE"; then
-        if ! isRepo "$BARE" || [ "$(git rev-parse --is-bare-repository)" = false ]; then
+        if isRepo "$BARE" && [ "$(git rev-parse --is-bare-repository)" = true ]; then
+            warnmsg "Reusing existing BARE ('$BARE'), thus ignoring any --remote argument"
+        else
             errmsg "failed to reuse folder '$BARE' as BARE: not a repo or not bare"
             return $OPT_ERR
         fi
