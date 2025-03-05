@@ -390,7 +390,7 @@ main() {
     else
         setup_home
     fi
-    setup_dotfiles
+    setup_dotfiles # reuse exit code as script's exit status
 }
 
 # args: path
