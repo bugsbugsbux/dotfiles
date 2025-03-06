@@ -10,7 +10,7 @@
 source ./setup-utils.sh
 
 ##################################################
-# <++> define how to set up HOME (apart from dotfiles)
+# <++> optional: define function setup_home to set up HOME (apart from dotfiles) as you wish
 
 setup_home() {
     debugmsg "### ${FUNCNAME[0]} $*"
