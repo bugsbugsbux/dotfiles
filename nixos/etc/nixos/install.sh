@@ -29,6 +29,9 @@ install\.sh
 .*\.patch
 ")
 
+# ensure no links ended up in BUILDDIR
+find -P "$BUILDDIR" -type l -delete
+
 # install
 
 sudo cp --recursive --dereference "$BUILDDIR"/* /etc/nixos
