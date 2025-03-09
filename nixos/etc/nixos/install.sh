@@ -26,8 +26,8 @@ cp --recursive --target-directory="$BUILDDIR" $(
     ls -1 | grep --invert-match --line-regexp "\
 configuration\.nix
 install\.sh
-.*\.patch"
-)
+.*\.patch
+")
 
 # install
 
