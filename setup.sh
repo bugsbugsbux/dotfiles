@@ -1,170 +1,140 @@
 #!/usr/bin/env bash
 
-ERR_GENERIC=50
-ERR_USAGE=51
-ERR_ARGS=52
-ERR_EXISTING_FILES=53
+# tags: TODO, CHECK, NOTE, FIXME, DEBUG
+# add your code in these places: <++>
 
-BARE_SRC="$PWD"
-BARE="$HOME/repos/dotfiles.git"
+#disable "arguments mentioned never passed" warning caused by my debug messages
+# shellcheck disable=SC2120
 
-# create relative link $2 pointing to $1
-linkstall () {
-    local src="${1/#'~'/$HOME}" dst="${2/#'~'/$HOME}"
-    if [[ ! -e "$src" ]]; then
-        echo ERROR: "$src" does not exist! >&2
-        return $ERR_ARGS
-    fi
-    if [[ -e "$dst" ]]; then
-        echo ERROR: "$dst" exists! >&2
-        return $ERR_ARGS
-    fi
-    ln --symbolic --relative --no-target-directory "$src" "$dst"
-}
+# load utils
+source ./setup-utils.sh
 
-pushd () { command pushd "$@"; } >/dev/null
-popd ()  { command popd  "$@"; } >/dev/null
-
-
-# clones from REMOTE to ~/repos/dotfiles.git and
-# makes sparse-checkouts of it in ~/.dot
-# then links the files to the correct locations as specified here:
-setup_dotfiles() {
-
-    # abort on dirty state
-    if [[ -e ~/.config || -e ~/.dot || -e ~/repos ]]; then
-        echo ERROR: some locations already exist! >&2
-        exit $ERR_EXISTING_FILES
-    fi
-
-    # create required folders
-    mkdir -p ~/.config ~/.dot ~/repos
-
-    # create bare clone
-    pushd ~/repos
-        git clone --quiet --bare --no-local "$BARE_SRC" "$BARE" || exit $ERR_GENERIC
-    popd
-
-    # create sparse clones (and link to them)
-    # NOTE: start sparse-checkout patterns with a /
-    pushd ~/.dot
-
-        git clone --quiet "$BARE" etc && {
-        pushd etc
-            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/etc
-            git checkout --quiet -b dev
-            echo "PLEASE manually install files from '$PWD/$PLATFORM/etc/…' to '/etc/…'"
-            # on nixos put a link to here into HOME:
-            if [[ "$PLATFORM" == "nixos" ]]; then
-                linkstall "${PLATFORM}/etc/nixos" ~/nixos
-            fi
-        popd; }
-
-        git clone --quiet "$BARE" shell && {
-        pushd shell
-            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/{.{bash,input}rc,.{,bash_}profile,.bash_{login,logout,aliases}}
-            git checkout --quiet -b dev
-            linkstall {"$PLATFORM",~}/.bashrc
-            linkstall {"$PLATFORM",~}/.inputrc
-            # linkstall {"$PLATFORM",~}/.profile
-            linkstall {"$PLATFORM",~}/.bash_profile
-            # linkstall {"$PLATFORM",~}/.bash_login
-            # linkstall {"$PLATFORM",~}/.bash_logout
-            linkstall {"$PLATFORM",~}/.bash_aliases
-        popd; }
-
-        git clone --quiet "$BARE" fish && {
-        pushd fish
-            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/.config/fish
-            git checkout --quiet -b dev
-            linkstall {"$PLATFORM",~}/.config/fish
-        popd; }
-
-        git clone --quiet "$BARE" sway && {
-        pushd sway
-            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/.config/{mako,sway,tofi}
-            git checkout --quiet -b dev
-            linkstall {"$PLATFORM",~}/.config/mako
-            linkstall {"$PLATFORM",~}/.config/sway
-            linkstall {"$PLATFORM",~}/.config/tofi
-        popd; }
-
-        git clone --quiet "$BARE" term && {
-        pushd term
-            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/.config/{alacritty,foot,wezterm}
-            git checkout --quiet -b dev
-            linkstall {"$PLATFORM",~}/.config/alacritty
-            linkstall {"$PLATFORM",~}/.config/foot
-            linkstall {"$PLATFORM",~}/.config/wezterm
-        popd; }
-
-        git clone --quiet "$BARE" nvim && {
-        pushd nvim
-            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/.config/nvim
-            git checkout --quiet -b dev
-            linkstall {"$PLATFORM",~}/.config/nvim
-        popd; }
-
-        git clone --quiet "$BARE" other && {
-        pushd other
-            git sparse-checkout set --no-cone /setup.sh /{linux,nixos,termux,windows}/.config/{git,tmux,wireplumber}
-            git sparse-checkout add /{linux,nixos,termux,windows}/{.npmrc,.config/chromium-flags.conf}
-            git checkout --quiet -b dev
-            linkstall {"$PLATFORM",~}/.npmrc
-            linkstall {"$PLATFORM",~}/.config/git
-            linkstall {"$PLATFORM",~}/.config/tmux
-            linkstall {"$PLATFORM",~}/.config/wireplumber
-            linkstall {"$PLATFORM",~}/.config/chromium-flags.conf
-        popd; }
-
-    popd
-
-}
+##################################################
+# <++> optional: define function setup_home to set up HOME (apart from dotfiles) as you wish
 
 setup_home() {
+    debugmsg "### ${FUNCNAME[0]} $*"
 
-    # this is not for every platform
-    if [[ "$PLATFORM" != "linux" && "$PLATFORM" != "nixos" && "$PLATFORM" != "termux" ]]; then
-        echo "WARNING: setup_home does not do anything on platform $PLATFORM!" >&2
-        return
-    fi
-
-    # abort on dirty state
-    if [[ -e ~/Documents || -e ~/Videos || -e ~/Music || -e ~/Pictures ]]; then
-        echo ERROR: some locations already exist! >&2
-        exit $ERR_EXISTING_FILES
-    fi
+    # dont do anything on termux
+    isTermux && {
+        infomsg "Skipping setup_home on platform termux"
+        return $PATFORM_ERR
+    }
 
     # create data folders
-    mkdir -p ~/Data/{Documents,Videos,Music,Pictures}
-    ln --symbolic --relative ~/{Data/,}Documents
-    ln --symbolic --relative ~/{Data/,}Videos
-    ln --symbolic --relative ~/{Data/,}Music
-    ln --symbolic --relative ~/{Data/,}Pictures
+    mkdir_p ~/Data/{Documents,Videos,Music,Pictures}
+    linkstall ~/{Data/,}Documents
+    linkstall ~/{Data/,}Videos
+    linkstall ~/{Data/,}Music
+    linkstall ~/{Data/,}Pictures
 
     # create a downloads folder
-    mkdir -p ~/Downloads
+    mkdir_p ~/Downloads
 
     # create a user bin/ folder
-    mkdir -p ~/.local/bin
+    mkdir_p ~/.local/bin
 
     # create a user-fonts folder
-    mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}"/fonts
-
+    local xdg_data_home
+    xdg_data_home="${XDG_DATA_HOME:-$HOME/.local/share}"
+    debugmsg "XDG_DATA_HOME='$xdg_data_home'"
+    mkdir_p "$xdg_data_home"/fonts
 }
 
-# throw if prerequisites aren't met
-if (( "$UID" == 0 )); then
-    echo ERROR: must not run as root! >&2
-    exit $ERR_EXISTING_FILES
-fi
-case "$PLATFORM" in
-    linux|nixos|termux|windows) ;;
-    *)
-        echo ERROR: PLATFORM not set or invliad value: "'$PLATFORM'"
-        exit $ERR_ARGS
-    ;;
-esac
+##################################################
+# <++> define your handlers
 
-setup_dotfiles
-setup_home
+# A "handler" is a function invoked in a CLONE/TOPIC repo to install the files of this topic
+# How to write a handler:
+# 0. add the handler's name as value to a new key TOPIC in dictionary topic_handlers
+# 1. checkout the files of the topic (using sparse-checkout patterns) using `checkoutFiles`
+#   NOTE: the ptterns shall start with / (indicating the repository root)
+#   NOTE: don't distinguish platforms yet
+# 2. install these files to their correct locations using `linkstall` or `manual_install`
+#   NOTE: distinguish platforms using isTermux, isNixOS
+# 3. optional other actions related to given topic of files
+#   NOTE: to create directories use `mkdir_p` (logs its activities)
+# 4. logging would be nice (functions {log,err,warn,info,debug}mess)
+
+handler_etc() {
+    checkoutFiles /linux/etc
+
+    if isNixOS; then
+        manual_install {linux,}/etc/nixos
+        # put link to nixos subfolder of repo into HOME
+        linkstall linux/etc/nixos ~/nixos
+    elif ! isTermux; then
+        manual_install {linux,}/etc/environment
+    fi
+}
+
+handler_shell() {
+    checkoutFiles \
+        /linux/etc/profile \
+        /linux/{.{bash,input}rc,.{,bash_}profile,.bash_{login,logout,aliases}} \
+        /linux/.config/fish
+
+    linkstall {linux,~}/.inputrc
+    # bash
+    linkstall {linux,~}/.bashrc
+    linkstall {linux,~}/.bash_aliases
+    # read when invoked as login shell
+        # manual_install {linux,}/etc/profile
+        # linkstall {linux,~}/.profile
+        # linkstall {linux,~}/.bash_login
+        linkstall {linux,~}/.bash_profile
+    # read when exiting a login shell (using exit or when interactive)
+        # linkstall {linux,~}/.bash_logout
+    # fish
+    linkstall {linux,~}/.config/fish
+}
+
+handler_nvim() {
+    checkoutFiles /linux/.config/nvim
+    linkstall {linux,~}/.config/nvim
+}
+
+handler_sway() {
+    checkoutFiles \
+        /linux/.config/{sway,tofi} \
+        /linux/.config/mako
+    linkstall {linux,~}/.config/sway
+    linkstall {linux,~}/.config/tofi
+    #linkstall {linux,~}/.config/mako
+}
+
+handler_other() {
+    checkoutFiles \
+        /linux/.npmrc \
+        /linux/.config/{alacritty,foot,wezterm} \
+        /linux/.config/git \
+        /linux/.config/tmux \
+        /linux/.config/wireplumber \
+        /linux/.config/chromium-flags.conf
+    # terminals
+        linkstall {linux,~}/.config/alacritty
+        linkstall {linux,~}/.config/foot
+        linkstall {linux,~}/.config/wezterm
+    linkstall {linux,~}/.npmrc
+    linkstall {linux,~}/.config/git
+    linkstall {linux,~}/.config/tmux
+    linkstall {linux,~}/.config/wireplumber
+    linkstall {linux,~}/.config/chromium-flags.conf
+}
+
+
+##################################################
+# <++> assign handlers to a certain TOPIC repo
+topic_handlers=(
+    [etc]=handler_etc
+    [shell]=handler_shell
+    [nvim]=handler_nvim
+    [sway]=handler_sway
+    [other]=handler_other
+)
+
+##################################################
+# run main function, unless this file is being sourced
+(return &>/dev/null) || main "$@"
+
+# vim: tw=0 cc=100

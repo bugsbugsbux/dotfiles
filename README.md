@@ -1,10 +1,9 @@
 **What is this?**
 
-This repo contains my dotfiles, separated by target paltform (the
-toplevel folders) and named as they would be in HOME or root, meaning
-`/etc/*` files would be in `PLATFORM/etc/*` and hidden files, like
-`~/.config/*`, stay hidden: `PLATFORM/.config/*`. This is because it
-makes it easier to automate the install process.
+This repo contains a folder with my dotfiles, named as they would be in
+HOME or root, meaning `/etc/*` files would be in `TOPLEVEL/etc/*` and
+hidden files, like `~/.config/*`, stay hidden: `TOPLEVEL/.config/*`.
+This is because it makes it easier to automate the install process.
 
 **How to manage dotfiles?**
 
@@ -27,8 +26,8 @@ back to LOCAL. LOCAL is used to push and pull to/from REMOTE.
 
 The `setup.sh` script not only handles setting up the dotfiles,
 including creating the necessary files, folders and clones, but **also
-sets up the HOME directory how I like it.** Here is to to use it:
+sets up the HOME directory how I like it.**
 
-~~~
-PLATFORM=myplatform ./setup.sh      # setting PLATFORM is required!
-~~~
+```bash
+./setup.sh --help
+```
