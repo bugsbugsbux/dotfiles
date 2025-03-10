@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Usage: [NAME=myhostname] ./install.sh
+
 if [[ "$(basename "$PWD")" != "nixos" ]]; then
     echo You seem to be in the wrong directory! >&2
     exit 1
@@ -7,27 +9,28 @@ fi
 
 # setup
 
-BUILDDIR=$(mktemp -d)
+BUILDDIR="$(mktemp -d)"
 NAME="${NAME:-$(hostname)}"
-
-echo "build directory is: $BUILDDIR" >&2
 
 # cp config to BUILDDIR & patch
 
 cp ./configuration.nix "$BUILDDIR"
-patch "${BUILDDIR}/configuration.nix" "${NAME}.patch" || {
+patch --silent --no-backup-if-mismatch "${BUILDDIR}/configuration.nix" "${NAME}.patch" || {
     rm -rf "$BUILDDIR"
     exit 1
 }
 
 # copy other files to BUILDDIR
 
-cp --recursive --target-directory "$BUILDDIR" $(
+cp --recursive --target-directory="$BUILDDIR" $(
     ls -1 | grep --invert-match --line-regexp "\
 configuration\.nix
 install\.sh
-.*\.patch"
-)
+.*\.patch
+")
+
+# ensure no links ended up in BUILDDIR
+find -P "$BUILDDIR" -type l -delete
 
 # install
 

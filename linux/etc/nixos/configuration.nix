@@ -66,6 +66,14 @@ in {
 
     boot.tmp.cleanOnBoot = true;    # clear /tmp on startup
 
+    # kernel
+    # unmaintained ones, such as outdated non-LTS, not available
+    # specific ones such as linux_6_13 are in pkgs.linuxKernel.kernels.*
+    # latest stable: pkgs.linuxPackages
+    # latest release: pkgs.linuxPackages_latest
+    # latest RC (=candidate): pkgs.linuxPackages_testing
+    boot.kernelPackages = pkgs.linuxPackages_latest;
+
     console.keyMap = "de-latin1";
 
     time.timeZone = "Europe/Berlin";
@@ -154,39 +162,39 @@ in {
 
     # printing (CUPS runs on http://localhost:631; foomatic is not needed when using CUPS, which we do)
     services.printing.enable = true;
-    # drivers; if nothing works, try connecting via the network: IPP-Eveywhere works without drivers
-    services.printing.drivers = with pkgs; [
-
-        # driver packages from nixpkgs:
-        splix               # printers supporting SPL (Samsung-Printer-Language, not only used by samsung)
-        samsung-unified-linux-driver # some Samsung printers
-        gutenprint          # driver collection for various vendors
-        gutenprintBin       # binary-only driver collection for various vendors
-        hplip               # some HP printers
-        hplipWithPlugin     # more HP printers; requires: `nix-shell -p hplipWithPlugin --run "sudo -E hp-setup"`
-        postscript-lexmark  # printers from lexmark
-        brlaser             # some Brother printers
-        brgenml1lpr brgenml1cupswrapper # generic Brother drivers
-        cnijfilter2         # some Canon Pixma printers
-
-        # manually downloaded drivers:
-        #(writeTextDir "share/cups/model/HP_Color_Laser_MFP_17x_Series.ppd" (builtins.readFile ~/Downloads/hp-uld-drivers/uld/noarch/share/ppd/HP_Color_Laser_MFP_17x_Series.ppd))
-    ];
-    # setup my known printers here in the config (optional)
-    # manually changing their settings later won't persist!
-    #hardware.printers = {
-    #    ensurePrinters = [
-    #        {
-    #            name = "";
-    #            location = "";
-    #            diviceUri = ""; # "http://..." or "usb://"
-    #            model = "SOME.PPD"; # might start with "drv:///..."
-    #            ppdOptions = {
-    #                PageSize = "A4";
-    #            };
-    #        }
-    #    ];
-    #};
+    ## drivers; if nothing works, try connecting via the network: IPP-Eveywhere works without drivers
+    #services.printing.drivers = with pkgs; [
+    #
+    #    # driver packages from nixpkgs:
+    #    splix               # printers supporting SPL (Samsung-Printer-Language, not only used by samsung)
+    #    samsung-unified-linux-driver # some Samsung printers
+    #    gutenprint          # driver collection for various vendors
+    #    gutenprintBin       # binary-only driver collection for various vendors
+    #    hplip               # some HP printers
+    #    hplipWithPlugin     # more HP printers; requires: `nix-shell -p hplipWithPlugin --run "sudo -E hp-setup"`
+    #    postscript-lexmark  # printers from lexmark
+    #    brlaser             # some Brother printers
+    #    brgenml1lpr brgenml1cupswrapper # generic Brother drivers
+    #    cnijfilter2         # some Canon Pixma printers
+    #
+    #    # manually downloaded drivers:
+    #    #(writeTextDir "share/cups/model/HP_Color_Laser_MFP_17x_Series.ppd" (builtins.readFile ~/Downloads/hp-uld-drivers/uld/noarch/share/ppd/HP_Color_Laser_MFP_17x_Series.ppd))
+    #];
+    ## setup my known printers here in the config (optional)
+    ## manually changing their settings later won't persist!
+    ##hardware.printers = {
+    ##    ensurePrinters = [
+    ##        {
+    ##            name = "";
+    ##            location = "";
+    ##            diviceUri = ""; # "http://..." or "usb://"
+    ##            model = "SOME.PPD"; # might start with "drv:///..."
+    ##            ppdOptions = {
+    ##                PageSize = "A4";
+    ##            };
+    ##        }
+    ##    ];
+    ##};
 
     # scanning
     # NOTE: users must be in "scanner" and "lp" groups
@@ -195,9 +203,9 @@ in {
         enable = true;
         extraBackends = with pkgs; [
             sane-airscan    # airscan, ms wsd scanners NOTE: also add this to services.udev.packages
-            hplipWithPlugin # most hp scanners
-            epkowa          # epson scanners
-            utsushi         # more epson; NOTE: also add this to services.udev.packages
+            #hplipWithPlugin # most hp scanners
+            #epkowa          # epson scanners
+            #utsushi         # more epson; NOTE: also add this to services.udev.packages
         ];
 
         # NOTE: downloadable/extracted scansnap snapscan firmware must be added to nixpkgs.config.sane.snapscanFirmware
@@ -217,7 +225,7 @@ in {
         # disabledDefaultBackends = [ "escl" ];
 
         # find network scanners:
-        #openFirewall = true; # i believe its tcp port 6566
+        openFirewall = true; # i believe its tcp port 6566
         # try to find scanners on these hosts:
         #netConf = ''
         #    192.168.0.1
@@ -228,7 +236,7 @@ in {
 
     services.udev.packages = with pkgs; [
         sane-airscan    # airscan
-        utsushi         # epson
+        #utsushi         # some epson scanners
     ];
 
     # find network printers (udp port 5353) and scanners (see also: hardware.sane.openFirewall)
@@ -238,6 +246,7 @@ in {
         nssmdns4 = true;
     };
     # driverless (airless) printing/scanning via usb cable
+    # CHECK: is the service running? i had to run `systemctl start ipp-usb.service` once
     services.ipp-usb.enable = true;
 
     # power management
@@ -291,6 +300,20 @@ in {
     #   2. mkdir -p $HOME/.local/share/fonts
     #   3. cp --dereference /run/current-system/sw/share/X11/fonts/* $HOME/.local/share/fonts/
     #   4. do NOT grant flatpaks access to this font folder!
+
+    # APPIMAGEs
+    # - traditionally appimages are simply executed after making them executable:
+    #   with `chmod u+x my.appimage; ./my.appimage [args...]`
+    # - most of the time this fails on nixos due to hardcoded paths; instead run appimages
+    #   with `appimage-run ./my.appimage [args...]`
+    # - to do this automatically when executing an appimage set programs.appimage.binfmt=true;
+    # - NOTE: if it still doesn't work (and there's no other way to install) package yourself
+    #   using `appimageTools.wrapType2 { inherit name src; extraPkgs = pkgs: [pkgs.mydep]; };`
+    #   see: https://nixos.org/manual/nixpkgs/stable/#sec-pkgs-appimageTools
+    programs.appimage = {
+        enable = true;      # provides pkgs.appimage-run
+        binfmt = true;      # automatically interpret `./my.appimage` as `appimage-run ./my.appimage`
+    };
 
     environment.localBinInPath = true;
     environment.variables = {
