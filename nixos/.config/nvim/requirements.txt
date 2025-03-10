@@ -1,6 +1,0 @@
-pynvim
-black
-mypy
-jedi-language-server
-debugpy
-cmake-language-server
