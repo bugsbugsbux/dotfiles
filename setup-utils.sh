@@ -265,6 +265,7 @@ setup_dotfiles() {
         if isRepo && [ "$(git rev-parse --is-bare-repository)" = true ]; then
             # BARE must not have any worktrees, otherwise one cannot push to it, which is the whole
             # point. sadly this is not already checked by --is-bare-repository
+            git worktree prune --no-verbose
             local wtlist
             wtlist="$(git rev-parse --git-dir)"/worktrees
             if [[ -d "$wtlist" && $(ls -1 "$wtlist" | wc -l) -gt 0 ]]; then
