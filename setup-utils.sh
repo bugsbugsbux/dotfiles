@@ -509,13 +509,13 @@ manual_install() {
 }
 
 # args: [pattern ...]
-# sparse-checkout with --no-cone, including /setup.sh and warning about certain patterns
+# sparse-checkout with --no-cone, including /setup{,-utils}.sh and warning about certain patterns
 checkoutFiles() {
     debugmsg "### ${FUNCNAME[0]} $*"
     for pat; do
         [[ "$pat" != /* ]] && warnmsg "sparse-checkout pattern '$pat' doesn't start with slash"
     done
-    git sparse-checkout set --no-cone /setup.sh "$@"
+    git sparse-checkout set --no-cone /setup.sh /setup-utils.sh "$@"
 }
 
 isNixOS() {
