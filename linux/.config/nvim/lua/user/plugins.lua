@@ -23,7 +23,7 @@ local dressing_nvim = 'stevearc/dressing.nvim'
 local fidget_nvim = 'j-hui/fidget.nvim'
 local flatten_nvim = 'willothy/flatten.nvim'
 local hex_nvim = 'RaafatTurki/hex.nvim'
-local lightswitch = 'herrvonvoid/lightswitch'
+local lightswitch = 'bugsbugsbux/lightswitch'
 local lualine_nvim = 'nvim-lualine/lualine.nvim'
 local material_nvim = 'marko-cerovac/material.nvim'
 local neoconf_nvim = 'folke/neoconf.nvim'
@@ -34,8 +34,8 @@ local nvim_lint = 'mfussenegger/nvim-lint'
 local nvim_treesitter = 'nvim-treesitter/nvim-treesitter'
 local oil_nvim = 'stevearc/oil.nvim'
 local schemastore_nvim = 'b0o/SchemaStore.nvim'
-local sendline = 'herrvonvoid/sendline'
-local spotter = 'herrvonvoid/spotter'
+local sendline = 'bugsbugsbux/sendline'
+local spotter = 'bugsbugsbux/spotter'
 local telescope_nvim = 'nvim-telescope/telescope.nvim'
 local tokyonight_nvim = 'folke/tokyonight.nvim'
 local trouble_nvim = 'folke/trouble.nvim'
@@ -235,7 +235,6 @@ require('lazy').setup({
     -- easily spot the targets for f/t/F/T motions
     {
         spotter,
-        dev = false,
         config = function()
             require('user.plugs.spotter')
         end
@@ -282,7 +281,6 @@ require('lazy').setup({
     -- send code lines to (nvim) terminal
     {
         sendline,
-        dev = false,
         cmd = {'Sendline', 'SendlineConnect'},
         event = 'TermOpen',
         config = function()
@@ -293,7 +291,6 @@ require('lazy').setup({
     -- switch colorscheme brightness
     {
         lightswitch,
-        dev = false,
         event = 'User LazyDone',
         config = function()
             ---@diagnostic disable-next-line:different-requires
