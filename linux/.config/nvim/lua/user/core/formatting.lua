@@ -13,5 +13,6 @@ require('conform').setup{
         lua = { 'stylua' },
         python = { 'black' },
         fish = { 'fish_indent' },
+        html = { 'prettierd' },
     },
 }
