@@ -235,7 +235,6 @@ require('lazy').setup({
     -- easily spot the targets for f/t/F/T motions
     {
         spotter,
-        dev = false,
         config = function()
             require('user.plugs.spotter')
         end
@@ -282,7 +281,6 @@ require('lazy').setup({
     -- send code lines to (nvim) terminal
     {
         sendline,
-        dev = false,
         cmd = {'Sendline', 'SendlineConnect'},
         event = 'TermOpen',
         config = function()
@@ -293,7 +291,6 @@ require('lazy').setup({
     -- switch colorscheme brightness
     {
         lightswitch,
-        dev = false,
         event = 'User LazyDone',
         config = function()
             ---@diagnostic disable-next-line:different-requires

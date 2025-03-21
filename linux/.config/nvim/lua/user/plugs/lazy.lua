@@ -48,4 +48,9 @@ return {
             }
         },
     },
+    dev = {
+        path = "~/nvimdev",
+        patterns = {'bugsbugsbux'},
+        fallback = true,
+    },
 }
