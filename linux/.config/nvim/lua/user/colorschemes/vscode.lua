@@ -1,6 +1,7 @@
 -- VSCode-like colorscheme: https://github.com/Mofiqul/vscode.nvim
 
 require('vscode').setup({
+    transparent = false,
     italic_comments = false,
 })
 
