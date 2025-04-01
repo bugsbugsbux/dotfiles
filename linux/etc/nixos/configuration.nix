@@ -442,7 +442,6 @@ in {
         chromium                    # web browser
         evince                      # pdf viewer
         gedit                       # graphical file editor
-        gnome-terminal              # my favorite terminal
         nautilus                    # graphical file manager
         simple-scan                 # scanner
         libreoffice-fresh           # document suite
