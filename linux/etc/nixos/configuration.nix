@@ -491,6 +491,7 @@ in {
             fzf                     # for better bash history search (ctrl-r); see bashrc
             libfaketime             # provides faketime command
             pandoc                  # markup converter
+            pdfcpu                  # pdf manipulation
             ripgrep                 # fast file content searcher
             tmux                    # terminal multiplexer
             scrcpy                  # "screen copy" shows phone screen on desktop
