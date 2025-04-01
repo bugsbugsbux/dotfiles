@@ -20,7 +20,7 @@ in {
     # to run gc manually use `nix-collect-garbage`
     nix.gc = {
         automatic = true;
-        dates = "14 days"; # see: `man systemd.time`
+        dates = "7 days"; # see: `man systemd.time`
         persistent = true; # run once if one or more runs were missed
     };
 
