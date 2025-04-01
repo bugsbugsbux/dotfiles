@@ -508,6 +508,7 @@ in {
             python312
 
             # apps:
+            visidata                # tui csv editor
 
             # games:
             zeroad
