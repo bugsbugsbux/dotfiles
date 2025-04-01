@@ -278,7 +278,7 @@ in {
     # run unpatched linux executables
     programs.nix-ld = {
         enable = true;
-        # put necessary libraries here:
+        # put necessary libraries here (figure them out with ldd)
         #libraries = with pkgs; [];
     };
 
@@ -474,7 +474,7 @@ in {
 
     users.users.auser = {
         initialPassword = "change_me_after_install";
-        isNormalUser = true;
+        isNormalUser = true;        # adds to group "users", creates /home/NAME as user's home
         extraGroups = [
             "wheel"                 # allows elevating privileges
             "networkmanager"        # allows modifying connections
