@@ -453,6 +453,7 @@ in {
         nautilus                    # graphical file manager
         simple-scan                 # scanner
         libreoffice-fresh           # document suite
+        localsend                   # send,receive via local network
         mpv                         # music,video player
         shotwell                    # image viewer
         snapshot                    # webcam
@@ -482,7 +483,6 @@ in {
             "kvm"                   # improves android emulator performance
         ];
         packages = with pkgs; [
-            croc                    # securely send files
             fd                      # find alternative
             fzf                     # for better bash history search (ctrl-r); see bashrc
             libfaketime             # provides faketime command
