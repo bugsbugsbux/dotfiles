@@ -459,7 +459,8 @@ in {
         localsend                   # send,receive via local network
         mpv                         # music,video player
         shotwell                    # image viewer
-        snapshot                    # webcam
+        snapshot                    # simple webcam
+        webcamoid                   # webcam with effects such as flip, blur, pixelate
         kooha                       # screencast
     ];
 
