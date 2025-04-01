@@ -411,6 +411,14 @@ in {
         ];
     };
 
+    # # use other (mobile) device as graphic tablet
+    # # careful which users are added, they have control over input!
+    # programs.weylus = {
+    #     enable = true;
+    #     users = [ "auser" ];    # are added to "uinput" group
+    #     openFirewall = false;   # tcp ports 1701 and 9001
+    # };
+
     #
     # more global packages
     # these link some outputs to /run/current-system/sw/
