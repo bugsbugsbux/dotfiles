@@ -444,6 +444,9 @@ in {
 
         qt5.full
 
+        # archives
+        unzip
+
         system-config-printer       # gui printer setup; or use localhost:631
 
         # apps:
