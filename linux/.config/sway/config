@@ -217,10 +217,11 @@ set $launcher tofi-run | xargs swaymsg exec --
 bindsym $mod+o exec $launcher
 
 # browser (requires:)
+set $brave brave
 set $chromium chromium
 set $firefox firefox
 #
-set $browser $chromium
+set $browser $brave
 bindsym $mod+i exec LC_ALL="de_DE.UTF-8" $browser
 
 # files (requires nautilus)
