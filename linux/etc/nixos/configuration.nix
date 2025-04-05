@@ -262,7 +262,7 @@ in {
     xdg.mime = {
         # see also: xdg.mime.{added,removed}Associations
         defaultApplications = {
-            "application/pdf" = [ "org.gnome.Evince.desktop" "chromium-browser.desktop"];
+            "application/pdf" = [ "org.gnome.Evince.desktop" "brave-browser.desktop"];
         };
     };
 
@@ -450,7 +450,7 @@ in {
         system-config-printer       # gui printer setup; or use localhost:631
 
         # apps:
-        chromium                    # web browser
+        brave                       # web browser
         evince                      # pdf viewer
         gedit                       # graphical file editor
         nautilus                    # graphical file manager
