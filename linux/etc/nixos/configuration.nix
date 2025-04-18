@@ -428,6 +428,7 @@ in {
         bash-completion             # tab completion
         curl                        # make network requests
         easyeffects                 # apply audio effects
+        file                        # identify filetype
         git
             gh                      # access to github accouts
         htop                        # process monitor
