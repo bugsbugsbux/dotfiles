@@ -106,6 +106,13 @@ in {
         wireless.enable = false;    # uses wpa_supplicant instead of networkmanager
     };
 
+    # see: man 5 limits.conf
+    security.pam.loginLimits = [
+        # increase memlock to 64MB because otpclient complains otherwise
+        # memlock is the amout of memory that will not be paged out
+        { domain = "auser"; type = "-"; item = "memlock"; value = "65536" /*KiB*/; }
+    ];
+
     hardware.bluetooth = {
         enable = true;
         powerOnBoot = false;        # whether to start bluetooth immediately on boot
@@ -510,6 +517,7 @@ in {
 
             # apps:
             visidata                # tui csv editor
+            otpclient               # otp client # NOTE: requires >=64MB memlock; see security.pam.loginLimits
 
             # games:
             zeroad
