@@ -17,7 +17,7 @@ set $mod   $super
 bindsym Control+Alt+Delete exit
 # close window
 bindsym $mod+Backspace kill
-bindsym $mod+Escape    kill
+bindsym $mod+z         kill
 # fullscreen
 bindsym $mod+f fullscreen
 
