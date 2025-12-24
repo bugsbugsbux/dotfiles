@@ -339,6 +339,19 @@ in {
         EDITOR = "nvim";
     };
 
+    # virtualisation
+    # kvm hyperviser
+    boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
+    # libvirt
+    virtualisation.libvirtd = {
+        enable = true;
+        qemu = {
+            swtpm.enable = true; # tpm emulation in qemu
+            ovmf.packages = [ pkgs.OVMFFull.fd ]; # ovfm is needed for uefi guests
+        };
+    };
+
+
     #
     # specific programs:
     #
@@ -504,7 +517,8 @@ in {
             "networkmanager"        # allows modifying connections
             "scanner"               # allows using scanners
             "lp"                    # allows using scanners which are also printers
-            "kvm"                   # improves android emulator performance
+            "kvm"                   # (virtualisation) improves android emulator performance
+            "libvirtd"              # access to libvirtd daemon, used by virtual machine managers
         ];
         packages = with pkgs; [
             fd                      # find alternative
@@ -540,6 +554,10 @@ in {
         initialPassword = "change_me_after_install";
         isNormalUser = true;
         # extraGroups = [ "networkmanager" ];
+        extraGroups = [
+            "kvm"           # (virtualisation) improves android emulator performance
+            "libvirtd"      # access to libvirtd daemon, used by virtual machine managers
+        ];
         packages = with pkgs; [
         ];
     };
