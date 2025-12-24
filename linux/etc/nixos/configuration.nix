@@ -106,6 +106,16 @@ in {
 
         networkmanager.enable = true; # if true don't set wireless.enable=true
         wireless.enable = false;    # uses wpa_supplicant instead of networkmanager
+
+        ## nat is requird for nixos-containers to access internet
+        #nat = {
+        #    enable = true;
+        #    internalInterfaces = [
+        #        #"ve-acontainer"         # specific nixos-container
+        #        #"ve-+"                 # all nixos-containers
+        #    ];
+        #    externalInterface = "wlp3s0";
+        #};
     };
 
     # see: man 5 limits.conf
