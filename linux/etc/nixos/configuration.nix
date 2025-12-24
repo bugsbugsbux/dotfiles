@@ -35,9 +35,11 @@ in {
     };
 
     nixpkgs.config.allowUnfree = true;
+    # use this instead of nixpkgs.config.packageOverrides:
     nixpkgs.overlays = [
         # widevine is google's proprietary DRM software required for spotify etc
         (final: prev: {chromium = prev.chromium.override { enableWideVine = true; }; })
+
     ];
 
     #
