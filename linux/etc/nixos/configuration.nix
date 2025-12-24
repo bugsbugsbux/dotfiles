@@ -468,14 +468,16 @@ in {
         usbutils                    # provides lsusb
         neovim                      # editor
         nix-prefetch                # determine hash for FODs
-        qemu_full                   # virtualization
-        quickemu                    # preconfigured virtual machines
         tree                        # show nested folder structures
         typst                       # markup language targeting pdf
         wget                        # download files
         xdg-utils                   # open files appropriately
 
         qt6.full
+
+        # qemu
+        qemu_full                   # virtualisation
+        quickemu                    # preconfigured virtual machines
 
         # archives
         unzip
