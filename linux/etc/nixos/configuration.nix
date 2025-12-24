@@ -465,6 +465,7 @@ in {
             gh                      # access to github accouts
         htop                        # process monitor
         killall                     # kill processes by name
+        rclone                      # connect to cloud services
         usbutils                    # provides lsusb
         neovim                      # editor
         nix-prefetch                # determine hash for FODs
