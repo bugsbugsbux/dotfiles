@@ -171,32 +171,7 @@ in {
     # sound via pipewire:
     services.pipewire = {
         enable = true;
-        wireplumber = {
-            enable = true;
-            configPackages = [
-                # fix sound in vm stuttering or even completely stopping after at max 30min
-                # see: https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Troubleshooting#stuttering-audio-in-virtual-machine
-                (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/50-alsa-config.conf" ''
-                    monitor.alsa.rules = [
-                        {
-                            matches = [
-                                {
-                                    node.name = "~alsa_output.*"
-                                }
-                            ]
-                            actions = {
-                                update-props = {
-                                    session-props = {
-                                        api.alsa.period-size = 1024
-                                        api.alsa.headroom = 8192
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                '')
-            ];
-        };
+        wireplumber.enable = true;
         pulse.enable = true;
         alsa.enable = true;
         alsa.support32Bit = true;
