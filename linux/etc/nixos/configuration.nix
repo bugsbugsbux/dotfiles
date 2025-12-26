@@ -1,3 +1,5 @@
+# TAGS: TODO, NOTE, CHECK
+
 { config, lib, pkgs, ... }:
 
 let HOSTNAME = null;
