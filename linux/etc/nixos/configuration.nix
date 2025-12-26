@@ -541,7 +541,6 @@ in {
                 unixtools.xxd       # vim's hexviewer for hex.nvim
 
             # programming
-            j
             python312
 
             # apps:
