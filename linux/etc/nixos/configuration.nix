@@ -377,6 +377,9 @@ in {
 
             adwaita-icon-theme      # provides cursor styles
 
+            # make qt apps work
+            qt6.qtwayland               # there is no qt6.full package anymore
+
             # etc
             pulsemixer              # graphically adjust volume
             xorg.xeyes              # to test whether apps are x11 or wayland
@@ -473,8 +476,6 @@ in {
         typst                       # markup language targeting pdf
         wget                        # download files
         xdg-utils                   # open files appropriately
-
-        qt6.full
 
         # qemu
         qemu_full                   # virtualisation
