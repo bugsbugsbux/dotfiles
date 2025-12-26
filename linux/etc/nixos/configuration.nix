@@ -148,7 +148,7 @@ in {
 
             # windows fonts
             corefonts
-            vistafonts
+            vista-fonts
 
             # math fonts
             fira-math
@@ -288,12 +288,11 @@ in {
     };
 
     # TODO: make this hostname dependant
-    hardware.amdgpu.amdvlk.enable = true; # vulkan drivers
     hardware.graphics = {
         enable = true;
         enable32Bit = true;
-        extraPackages = with pkgs; [ amdvlk ];
-        extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
+        #extraPackages = with pkgs; [ ];
+        #extraPackages32 = with pkgs; [ ];
     };
 
     # run unpatched linux executables
@@ -349,7 +348,6 @@ in {
         enable = true;
         qemu = {
             swtpm.enable = true; # tpm emulation in qemu
-            ovmf.packages = [ pkgs.OVMFFull.fd ]; # ovfm is needed for uefi guests
         };
     };
 
@@ -378,6 +376,9 @@ in {
             wl-clipboard            # copy,paste on wayland
 
             adwaita-icon-theme      # provides cursor styles
+
+            # make qt apps work
+            qt6.qtwayland               # there is no qt6.full package anymore
 
             # etc
             pulsemixer              # graphically adjust volume
@@ -475,8 +476,6 @@ in {
         typst                       # markup language targeting pdf
         wget                        # download files
         xdg-utils                   # open files appropriately
-
-        qt6.full
 
         # qemu
         qemu_full                   # virtualisation
