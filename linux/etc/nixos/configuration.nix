@@ -565,4 +565,38 @@ in {
         ];
     };
 
+    #
+    # declarative nixos-containers:
+    #
+
+    # containers = {
+    #     # container with a shared folder and network access (see: networking.nat)
+    #     acontainer = let
+    #         CONTAINERUSER = "acontaineruser";
+    #     in {
+    #         config = {config, lib, pkgs, ...}: {
+    #             system.stateVersion = FIRST_INSTALL;
+    #             environment = {
+    #                 systemPackages = with pkgs; [
+    #                     bash-completion
+    #                     git
+    #                     #neovim
+    #                 ];
+    #                 #variables = {
+    #                 #    EDITOR = "nvim";
+    #                 #};
+    #             };
+    #             users.users.${CONTAINERUSER} = {
+    #                 isNormalUser = true;
+    #                 initialPassword = "change_me_after_install";
+    #                 #extraGroups = [ "wheel" ]; # sudo
+    #             };
+    #         };
+    #         bindMounts.sharedfolder = {
+    #             mountPoint = "/home/${CONTAINERUSER}/share_acontainer";
+    #             hostPath = "/home/auser/share_acontainer";      # CHECK: must exist or breaks config
+    #             isReadOnly = true;
+    #         };
+    #     };
+    # };
 }
