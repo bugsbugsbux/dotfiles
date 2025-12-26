@@ -492,7 +492,7 @@ in {
         nautilus                    # graphical file manager
         simple-scan                 # scanner
         libreoffice-fresh           # document suite
-        localsend                   # send,receive via local network
+        localsend                   # send,receive via local network # requires udp&tcp port 53317
         mpv                         # music,video player
         shotwell                    # image viewer
         signal-desktop              # private messenger
@@ -549,14 +549,13 @@ in {
             otpclient               # otp client # NOTE: requires >=64MB memlock; see security.pam.loginLimits
 
             # games:
-            zeroad
+            zeroad                  # real time strategy, civ&army builder
         ];
     };
 
     users.users.buser = {
         initialPassword = "change_me_after_install";
         isNormalUser = true;
-        # extraGroups = [ "networkmanager" ];
         extraGroups = [
             "kvm"           # (virtualisation) improves android emulator performance
             "libvirtd"      # access to libvirtd daemon, used by virtual machine managers
