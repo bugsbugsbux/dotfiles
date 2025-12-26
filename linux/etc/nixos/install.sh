@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Usage: [NAME=myhostname] ./install.sh
+# Usage: ./install.sh
 
 if [[ "$(basename "$PWD")" != "nixos" ]]; then
     echo You seem to be in the wrong directory! >&2
@@ -10,15 +10,10 @@ fi
 # setup
 
 BUILDDIR="$(mktemp -d)"
-NAME="${NAME:-$(hostname)}"
 
-# cp config to BUILDDIR & patch
+# cp config to BUILDDIR
 
 cp ./configuration.nix "$BUILDDIR"
-patch --silent --no-backup-if-mismatch "${BUILDDIR}/configuration.nix" "${NAME}.patch" || {
-    rm -rf "$BUILDDIR"
-    exit 1
-}
 
 # copy other files to BUILDDIR
 

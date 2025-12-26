@@ -2,8 +2,15 @@
 
 { config, lib, pkgs, ... }:
 
-let HOSTNAME = null;
-    FIRST_INSTALL = null;
+let
+    mymachines = {
+        tpe14gen3 = {
+            firstinstall = "24.05"; # CHECK: update when reinstalling
+        };
+    };
+
+    HOSTNAME = "tpe14gen3"; # CHECK: set to current machine
+    FIRST_INSTALL = mymachines.${HOSTNAME}.firstinstall;
 in {
     #
     # other config parts:
