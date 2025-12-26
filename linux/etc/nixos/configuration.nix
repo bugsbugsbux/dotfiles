@@ -495,6 +495,7 @@ in {
         localsend                   # send,receive via local network
         mpv                         # music,video player
         shotwell                    # image viewer
+        signal-desktop              # private messenger
         snapshot                    # simple webcam
         webcamoid                   # webcam with effects such as flip, blur, pixelate
         kooha                       # screencast
