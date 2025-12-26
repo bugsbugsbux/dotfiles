@@ -541,7 +541,7 @@ in {
                 unixtools.xxd       # vim's hexviewer for hex.nvim
 
             # programming
-            python312
+            uv                      # per project python version + environment (install packages)
 
             # apps:
             visidata                # tui csv editor
