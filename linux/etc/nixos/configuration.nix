@@ -1,7 +1,16 @@
+# TAGS: TODO, NOTE, CHECK
+
 { config, lib, pkgs, ... }:
 
-let HOSTNAME = null;
-    FIRST_INSTALL = null;
+let
+    mymachines = {
+        tpe14gen3 = {
+            firstinstall = "24.05"; # CHECK: update when reinstalling
+        };
+    };
+
+    HOSTNAME = "tpe14gen3"; # CHECK: set to current machine
+    FIRST_INSTALL = mymachines.${HOSTNAME}.firstinstall;
 in {
     #
     # other config parts:
@@ -20,7 +29,7 @@ in {
     # to run gc manually use `nix-collect-garbage`
     nix.gc = {
         automatic = true;
-        dates = "14 days"; # see: `man systemd.time`
+        dates = "7 days"; # see: `man systemd.time`
         persistent = true; # run once if one or more runs were missed
     };
 
@@ -35,9 +44,11 @@ in {
     };
 
     nixpkgs.config.allowUnfree = true;
+    # use this instead of nixpkgs.config.packageOverrides:
     nixpkgs.overlays = [
         # widevine is google's proprietary DRM software required for spotify etc
         (final: prev: {chromium = prev.chromium.override { enableWideVine = true; }; })
+
     ];
 
     #
@@ -104,7 +115,24 @@ in {
 
         networkmanager.enable = true; # if true don't set wireless.enable=true
         wireless.enable = false;    # uses wpa_supplicant instead of networkmanager
+
+        ## nat is requird for nixos-containers to access internet
+        #nat = {
+        #    enable = true;
+        #    internalInterfaces = [
+        #        #"ve-acontainer"         # specific nixos-container
+        #        #"ve-+"                 # all nixos-containers
+        #    ];
+        #    externalInterface = "wlp3s0";
+        #};
     };
+
+    # see: man 5 limits.conf
+    security.pam.loginLimits = [
+        # increase memlock to 64MB because otpclient complains otherwise
+        # memlock is the amout of memory that will not be paged out
+        { domain = "auser"; type = "-"; item = "memlock"; value = "65536" /*KiB*/; }
+    ];
 
     hardware.bluetooth = {
         enable = true;
@@ -127,7 +155,7 @@ in {
 
             # windows fonts
             corefonts
-            vistafonts
+            vista-fonts
 
             # math fonts
             fira-math
@@ -262,23 +290,21 @@ in {
     xdg.mime = {
         # see also: xdg.mime.{added,removed}Associations
         defaultApplications = {
-            "application/pdf" = [ "org.gnome.Evince.desktop" "chromium-browser.desktop"];
+            "application/pdf" = [ "org.gnome.Evince.desktop" "brave-browser.desktop"];
         };
     };
 
-    # TODO: make this hostname dependant
-    hardware.amdgpu.amdvlk.enable = true; # vulkan drivers
     hardware.graphics = {
         enable = true;
         enable32Bit = true;
-        extraPackages = with pkgs; [ amdvlk ];
-        extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
+        #extraPackages = with pkgs; [ ];
+        #extraPackages32 = with pkgs; [ ];
     };
 
     # run unpatched linux executables
     programs.nix-ld = {
         enable = true;
-        # put necessary libraries here:
+        # put necessary libraries here (figure them out with ldd)
         #libraries = with pkgs; [];
     };
 
@@ -292,7 +318,7 @@ in {
         wantedBy = ["multi-user.target"];
         path = [ pkgs.flatpak ];
         script = ''
-            flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+            flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
         '';
     };
     # - NOTE: if flatpaks complain about not finding fonts, try:
@@ -320,6 +346,18 @@ in {
         EDITOR = "nvim";
     };
 
+    # virtualisation
+    # kvm hyperviser
+    boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
+    # libvirt
+    virtualisation.libvirtd = {
+        enable = true;
+        qemu = {
+            swtpm.enable = true; # tpm emulation in qemu
+        };
+    };
+
+
     #
     # specific programs:
     #
@@ -344,6 +382,9 @@ in {
             wl-clipboard            # copy,paste on wayland
 
             adwaita-icon-theme      # provides cursor styles
+
+            # make qt apps work
+            qt6.qtwayland               # there is no qt6.full package anymore
 
             # etc
             pulsemixer              # graphically adjust volume
@@ -381,7 +422,7 @@ in {
         # Chromium/Electron
         export NIXOS_OZONE_WL=1
 
-        # QT apps; require pkgs.qt5.qtwayland
+        # QT apps; require pkgs.qt6.qtwayland
         export QT_QPA_PLATFORM="wayland-egl;xcb"
         export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
         # export QT_WAYLAND_FORCE_DPI=physical # use monitor's DPI instead of default (96)
@@ -411,6 +452,14 @@ in {
         ];
     };
 
+    # # use other (mobile) device as graphic tablet
+    # # careful which users are added, they have control over input!
+    # programs.weylus = {
+    #     enable = true;
+    #     users = [ "auser" ];    # are added to "uinput" group
+    #     openFirewall = false;   # tcp ports 1701 and 9001
+    # };
+
     #
     # more global packages
     # these link some outputs to /run/current-system/sw/
@@ -420,35 +469,42 @@ in {
         bash-completion             # tab completion
         curl                        # make network requests
         easyeffects                 # apply audio effects
+        file                        # identify filetype
         git
             gh                      # access to github accouts
         htop                        # process monitor
         killall                     # kill processes by name
+        rclone                      # connect to cloud services
         usbutils                    # provides lsusb
         neovim                      # editor
         nix-prefetch                # determine hash for FODs
-        qemu_full                   # virtualization
-        quickemu                    # preconfigured virtual machines
         tree                        # show nested folder structures
         typst                       # markup language targeting pdf
         wget                        # download files
         xdg-utils                   # open files appropriately
 
-        qt5.full
+        # qemu
+        qemu_full                   # virtualisation
+        quickemu                    # preconfigured virtual machines
+
+        # archives
+        unzip
 
         system-config-printer       # gui printer setup; or use localhost:631
 
         # apps:
-        chromium                    # web browser
+        brave                       # web browser
         evince                      # pdf viewer
         gedit                       # graphical file editor
-        gnome-terminal              # my favorite terminal
         nautilus                    # graphical file manager
         simple-scan                 # scanner
         libreoffice-fresh           # document suite
+        localsend                   # send,receive via local network # requires udp&tcp port 53317
         mpv                         # music,video player
         shotwell                    # image viewer
-        snapshot                    # webcam
+        signal-desktop              # private messenger
+        snapshot                    # simple webcam
+        webcamoid                   # webcam with effects such as flip, blur, pixelate
         kooha                       # screencast
     ];
 
@@ -466,20 +522,21 @@ in {
 
     users.users.auser = {
         initialPassword = "change_me_after_install";
-        isNormalUser = true;
+        isNormalUser = true;        # adds to group "users", creates /home/NAME as user's home
         extraGroups = [
             "wheel"                 # allows elevating privileges
             "networkmanager"        # allows modifying connections
             "scanner"               # allows using scanners
             "lp"                    # allows using scanners which are also printers
-            "kvm"                   # improves android emulator performance
+            "kvm"                   # (virtualisation) improves android emulator performance
+            "libvirtd"              # access to libvirtd daemon, used by virtual machine managers
         ];
         packages = with pkgs; [
-            croc                    # securely send files
             fd                      # find alternative
             fzf                     # for better bash history search (ctrl-r); see bashrc
             libfaketime             # provides faketime command
             pandoc                  # markup converter
+            pdfcpu                  # pdf manipulation
             ripgrep                 # fast file content searcher
             tmux                    # terminal multiplexer
             scrcpy                  # "screen copy" shows phone screen on desktop
@@ -492,22 +549,61 @@ in {
                 unixtools.xxd       # vim's hexviewer for hex.nvim
 
             # programming
-            j
-            python312
+            uv                      # per project python version + environment (install packages)
+            zig                     # low level programming
 
             # apps:
+            visidata                # tui csv editor
+            otpclient               # otp client # NOTE: requires >=64MB memlock; see security.pam.loginLimits
 
             # games:
-            zeroad
+            zeroad                  # real time strategy, civ&army builder
         ];
     };
 
     users.users.buser = {
         initialPassword = "change_me_after_install";
         isNormalUser = true;
-        # extraGroups = [ "networkmanager" ];
+        extraGroups = [
+            "kvm"           # (virtualisation) improves android emulator performance
+            "libvirtd"      # access to libvirtd daemon, used by virtual machine managers
+        ];
         packages = with pkgs; [
         ];
     };
 
+    #
+    # declarative nixos-containers:
+    #
+
+    # containers = {
+    #     # container with a shared folder and network access (see: networking.nat)
+    #     acontainer = let
+    #         CONTAINERUSER = "acontaineruser";
+    #     in {
+    #         config = {config, lib, pkgs, ...}: {
+    #             system.stateVersion = FIRST_INSTALL;
+    #             environment = {
+    #                 systemPackages = with pkgs; [
+    #                     bash-completion
+    #                     git
+    #                     #neovim
+    #                 ];
+    #                 #variables = {
+    #                 #    EDITOR = "nvim";
+    #                 #};
+    #             };
+    #             users.users.${CONTAINERUSER} = {
+    #                 isNormalUser = true;
+    #                 initialPassword = "change_me_after_install";
+    #                 #extraGroups = [ "wheel" ]; # sudo
+    #             };
+    #         };
+    #         bindMounts.sharedfolder = {
+    #             mountPoint = "/home/${CONTAINERUSER}/share_acontainer";
+    #             hostPath = "/home/auser/share_acontainer";      # CHECK: must exist or breaks config
+    #             isReadOnly = true;
+    #         };
+    #     };
+    # };
 }
