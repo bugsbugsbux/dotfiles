@@ -543,6 +543,7 @@ in {
 
             # programming
             uv                      # per project python version + environment (install packages)
+            zig                     # low level programming
 
             # apps:
             visidata                # tui csv editor
