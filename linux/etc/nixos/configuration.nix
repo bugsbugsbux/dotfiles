@@ -148,7 +148,7 @@ in {
 
             # windows fonts
             corefonts
-            vistafonts
+            vista-fonts
 
             # math fonts
             fira-math
