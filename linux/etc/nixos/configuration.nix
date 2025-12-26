@@ -288,12 +288,11 @@ in {
     };
 
     # TODO: make this hostname dependant
-    hardware.amdgpu.amdvlk.enable = true; # vulkan drivers
     hardware.graphics = {
         enable = true;
         enable32Bit = true;
-        extraPackages = with pkgs; [ amdvlk ];
-        extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
+        #extraPackages = with pkgs; [ ];
+        #extraPackages32 = with pkgs; [ ];
     };
 
     # run unpatched linux executables
