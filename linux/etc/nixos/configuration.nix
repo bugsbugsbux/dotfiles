@@ -348,7 +348,6 @@ in {
         enable = true;
         qemu = {
             swtpm.enable = true; # tpm emulation in qemu
-            ovmf.packages = [ pkgs.OVMFFull.fd ]; # ovfm is needed for uefi guests
         };
     };
 
