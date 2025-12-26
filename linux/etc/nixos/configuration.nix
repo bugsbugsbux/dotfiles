@@ -294,7 +294,6 @@ in {
         };
     };
 
-    # TODO: make this hostname dependant
     hardware.graphics = {
         enable = true;
         enable32Bit = true;
