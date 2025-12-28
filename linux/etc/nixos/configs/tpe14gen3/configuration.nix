@@ -1,16 +1,10 @@
 # TAGS: TODO, NOTE, CHECK
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, monego-font, ... }:
 
 let
-    mymachines = {
-        tpe14gen3 = {
-            firstinstall = "24.05"; # CHECK: update when reinstalling
-        };
-    };
-
-    HOSTNAME = "tpe14gen3"; # CHECK: set to current machine
-    FIRST_INSTALL = mymachines.${HOSTNAME}.firstinstall;
+    HOSTNAME = "tpe14gen3";
+    FIRST_INSTALL = "24.05"; # CHECK: update when reinstalling
 in {
     #
     # other config parts:
@@ -140,9 +134,7 @@ in {
     };
     services.blueman.enable = true; # also provides blueman-applet
 
-    fonts = let
-        monego-font = pkgs.callPackage ./monego-font {};
-    in {
+    fonts = {
         enableDefaultPackages = true; # has noto-fonts-color-emoji -> monochrome cannot be preferred
         packages = with pkgs; [
             noto-fonts
