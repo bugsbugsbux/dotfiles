@@ -9,6 +9,7 @@
 require('tokyonight').setup({
     style = 'night',
     light_style = 'day',
+    transparent = false,
     styles = {
         comments = { italic = false },
     },

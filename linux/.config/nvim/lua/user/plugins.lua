@@ -25,7 +25,6 @@ local flatten_nvim = 'willothy/flatten.nvim'
 local hex_nvim = 'RaafatTurki/hex.nvim'
 local lightswitch = 'bugsbugsbux/lightswitch'
 local lualine_nvim = 'nvim-lualine/lualine.nvim'
-local material_nvim = 'marko-cerovac/material.nvim'
 local neoconf_nvim = 'folke/neoconf.nvim'
 local nvim_cmp = 'hrsh7th/nvim-cmp'
 local nvim_dap = 'mfussenegger/nvim-dap'
@@ -37,14 +36,12 @@ local schemastore_nvim = 'b0o/SchemaStore.nvim'
 local sendline = 'bugsbugsbux/sendline'
 local spotter = 'bugsbugsbux/spotter'
 local telescope_nvim = 'nvim-telescope/telescope.nvim'
-local tokyonight_nvim = 'folke/tokyonight.nvim'
 local trouble_nvim = 'folke/trouble.nvim'
 local undotree = 'mbbill/undotree'
 local vim_signify = 'mhinz/vim-signify'
 local vim_snippets = 'honza/vim-snippets'
 local vim_startify = 'mhinz/vim-startify'
 local vim_table_mode = 'dhruvasagar/vim-table-mode'
-local vscode_nvim = 'Mofiqul/vscode.nvim'
 
 -- OTHER THAN THIS LAZY.NVIM SETTINGS SHOULD BE SET IN PLUGS/LAZY.LUA
 -- if nvim is opened from a neovim terminal: only load flatten.nvim
@@ -134,7 +131,7 @@ require('lazy').setup({
     },
 
     -- lsp
-    { _mason_lspconfig_nvim, dependencies = { _mason_nvim } },
+    { _mason_lspconfig_nvim, dependencies = { _mason_nvim }, branch = "v1.x" },
     { _nvim_lspconfig, dependencies = { _mason_lspconfig_nvim } },
     {
         name = 'meta_package_lsp',
@@ -307,22 +304,26 @@ require('lazy').setup({
         'EdenEast/nightfox.nvim',
         lazy = false,
         config = function() require('user.colorschemes.nightfox') end,
+        enabled = false,
     },
     {
         'marko-cerovac/material.nvim',
         lazy = false,
         config = function() require('user.colorschemes.material') end,
+        enabled = false,
     },
     {
         'Mofiqul/vscode.nvim',
         lazy = false,
         config = function() require('user.colorschemes.vscode') end,
+        enabled = false,
     },
     {
         'catppuccin/nvim',
         name = 'catppuccin',
         lazy = false,
         config = function() require('user.colorschemes.catppuccin') end,
+        enabled = false,
     },
 
 }, settings)

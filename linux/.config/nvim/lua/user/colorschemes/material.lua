@@ -17,6 +17,7 @@ require('material').setup{
     },
     disable = {
         colored_cursor = true,
+        background = false, -- `true` for transparency
     },
 }
 

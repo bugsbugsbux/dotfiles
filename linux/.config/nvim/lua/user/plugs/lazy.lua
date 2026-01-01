@@ -1,19 +1,21 @@
 local desc = {
-    cmd = 'Cmd:',
-    config = 'Conf:',
-    event = 'Event:',
-    ft = 'Ft:',
-    init = 'Init:',
-    import = 'Imp:',
-    keys = 'Keys:',
-    lazy = 'Lazy:',
-    loaded = 'Activ:',
-    not_loaded = 'Deact:',
-    plugin = 'Plug',
-    runtime = 'Runtime:',
-    source = 'Src:',
-    start = 'Start:',
-    task = 'Task:',
+    loaded = '[ON]',
+    not_loaded = '[OFF]',
+    lazy = '[WAIT]',
+    cmd = '[onCommand]',
+    event = '[onEvent]',
+    ft = '[onFt]',
+    keys = '[onKey]',
+
+    config = '[Conf]',
+    init = '[Init]',
+    import = '[Import]',
+    plugin = '[Plugin]',
+    runtime = '[Runtime]',
+    source = '[Source]',
+    start = '[Start]',
+    task = '[Task]',
+
     list = { '-', '|' },
 }
 local simple = {
@@ -39,7 +41,7 @@ return {
     -- defaults.cond WILL BE OVERRIDDEN IN user.plugins
     ui = {
         border = 'rounded',
-        icons = simple,
+        icons = desc,
     },
     performance = {
         rtp = {

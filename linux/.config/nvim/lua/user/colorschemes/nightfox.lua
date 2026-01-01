@@ -1,5 +1,6 @@
 require('nightfox').setup{
     options = {
+        transparent = false,
         styles = { -- for valid values see: `:help attr-list`, combine multiple with ,
             --comments = "italic",
         },
