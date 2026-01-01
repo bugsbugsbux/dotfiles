@@ -9,5 +9,14 @@
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
-  exec sway &>/tmp/sway.out
+
+
+    # TODO: replace ls|grep with globbing after setting extglob and nullglob options: /tmp/swaylog-+([0-9])
+
+    declare lastlog lastlognum nextlognum SWAYLOG
+    lastlog="$(ls -1 /tmp | grep -E -x "swaylog-[0-9]+" | sort | tail -1)"
+    lastlognum="${lastlog##*-}"
+    nextlognum=$((lastlognum + 1))
+    export SWAYLOG="/tmp/swaylog-$nextlognum"
+    exec sway &> "${SWAYLOG-/tmp/swaylog-0}"
 fi
