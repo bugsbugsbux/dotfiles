@@ -22,7 +22,7 @@ shopt -s histappend
 PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
 
 # \w is $PWD with $HOME as ~
-PS1='\w ($?$(test 1 -ne $SHLVL && echo -n " \$$SHLVL"))> '
+PS1='\w ($?$(test 1 -ne $SHLVL && echo -n " ^$SHLVL"))> '
 
 set -o vi       # not needed if set in ~/.inputrc
 
