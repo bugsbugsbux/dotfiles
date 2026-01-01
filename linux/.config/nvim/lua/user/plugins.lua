@@ -131,7 +131,7 @@ require('lazy').setup({
     },
 
     -- lsp
-    { _mason_lspconfig_nvim, dependencies = { _mason_nvim } },
+    { _mason_lspconfig_nvim, dependencies = { _mason_nvim }, branch = "v1.x" },
     { _nvim_lspconfig, dependencies = { _mason_lspconfig_nvim } },
     {
         name = 'meta_package_lsp',
