@@ -7,7 +7,9 @@ include /etc/sway/config.d/*
 # - requires xhost (xorg-xhost)
 # - requires bluetoothctl (bluez)
 # - requires blueman-applet (blueman)
-exec ~/.config/sway/startup.sh
+# `exec` only runs when starting sway, `exec_always` also runs on config reloads
+exec ~/.config/sway/on_startup.sh
+exec_always ~/.config/sway/on_every_load.sh
 
 set $alt   Mod1
 set $super Mod4
