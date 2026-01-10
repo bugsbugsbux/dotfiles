@@ -133,8 +133,8 @@ input type:touchpad {
 
 # keyboards (show with: swaymsg -t get_inputs)
 input type:keyboard {
-    xkb_layout "de"
-    xkb_options caps:escape,shift:both_capslock
+    xkb_layout de,us
+    xkb_options grp:ctrls_toggle,caps:escape,shift:both_capslock
 }
 # my laptop keyboard
 #input "1:1:AT_Translated_Set_2_keyboard" { }
