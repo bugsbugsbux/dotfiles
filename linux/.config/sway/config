@@ -85,11 +85,15 @@ bindsym $mod+Plus sticky toggle
 # floating windows of which only one can be shown at a time.
 # move window to scratchpad
 bindsym $mod+Shift+minus move scratchpad
+bindgesture pinch:3:inward move scratchpad
 # toggle showing and cycle through scratch-windows
 # (prefers focusing visible scratch-window)
 bindsym $mod+Tab scratchpad show
+bindgesture swipe:3:up scratchpad show
+bindgesture swipe:3:down scratchpad show
 
 # floating windows
+bindgesture pinch:3:outward floating disable
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+space focus mode_toggle
 mode "resize" {
