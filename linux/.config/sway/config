@@ -237,7 +237,7 @@ set $browser $brave
 bindsym $mod+i exec LANG="de_DE.UTF-8" LC_ALL="de_DE.UTF-8" $browser
 
 # files (requires nautilus)
-bindsym $mod+Shift+o exec LANG="de_DE.UTF-8" LC_ALL="de_DE.UTF-8" nautilus
+bindsym $mod+Shift+o exec LANG="de_DE.UTF-8" LC_ALL="de_DE.UTF-8" nautilus --new-window
 
 # audio (requires wireplumber)
 bindsym --locked XF86AudioMute        exec wpctl set-mute   @DEFAULT_AUDIO_SINK@ toggle
