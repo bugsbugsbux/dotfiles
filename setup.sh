@@ -59,11 +59,7 @@ setup_home() {
 handler_etc() {
     checkoutFiles /linux/etc
 
-    if isNixOS; then
-        manual_install {linux,}/etc/nixos
-        # put link to nixos subfolder of repo into HOME
-        linkstall linux/etc/nixos ~/nixos
-    elif ! isTermux; then
+    if ! isTermux; then
         manual_install {linux,}/etc/environment
     fi
 }
