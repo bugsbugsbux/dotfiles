@@ -50,6 +50,12 @@ bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
 
+# switch workspace with touchpad 3-finger swipe
+bindgesture swipe:3:left workspace next_on_output
+bindgesture swipe:3:right workspace prev_on_output
+# toggle previous workspace with 4 finger tap
+bindgesture hold:3 workspace back_and_forth
+
 # move floating window
 bindsym $mod+Shift+$left  move left  50 px
 bindsym $mod+Shift+Left   move left  50 px
@@ -79,11 +85,15 @@ bindsym $mod+Plus sticky toggle
 # floating windows of which only one can be shown at a time.
 # move window to scratchpad
 bindsym $mod+Shift+minus move scratchpad
+bindgesture pinch:3:inward move scratchpad
 # toggle showing and cycle through scratch-windows
 # (prefers focusing visible scratch-window)
 bindsym $mod+Tab scratchpad show
+bindgesture swipe:3:up scratchpad show
+bindgesture swipe:3:down scratchpad show
 
 # floating windows
+bindgesture pinch:3:outward floating disable
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+space focus mode_toggle
 mode "resize" {
@@ -133,8 +143,8 @@ input type:touchpad {
 
 # keyboards (show with: swaymsg -t get_inputs)
 input type:keyboard {
-    xkb_layout "de"
-    xkb_options caps:escape,shift:both_capslock
+    xkb_layout de,us
+    xkb_options grp:ctrls_toggle,caps:escape,shift:both_capslock
 }
 # my laptop keyboard
 #input "1:1:AT_Translated_Set_2_keyboard" { }
@@ -224,15 +234,15 @@ set $chromium chromium
 set $firefox firefox
 #
 set $browser $brave
-bindsym $mod+i exec LC_ALL="de_DE.UTF-8" $browser
+bindsym $mod+i exec LANG="de_DE.UTF-8" LC_ALL="de_DE.UTF-8" $browser
 
 # files (requires nautilus)
-bindsym $mod+Shift+o exec LC_ALL="de_DE.UTF-8" nautilus
+bindsym $mod+Shift+o exec LANG="de_DE.UTF-8" LC_ALL="de_DE.UTF-8" nautilus --new-window
 
 # audio (requires wireplumber)
 bindsym --locked XF86AudioMute        exec wpctl set-mute   @DEFAULT_AUDIO_SINK@ toggle
-bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-
-bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+
+bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-
+bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+ --limit 1.0
 
 # microphone (requires wireplumber)
 bindsym --locked XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
