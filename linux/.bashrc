@@ -5,6 +5,10 @@
 declare current_os
 current_os=$(cat /etc/lsb-release | grep DISTRIB_ID | cut -d= -f2)
 
+if test "nixos" != "$current_os" ; then
+    export PATH="$PATH:$HOME/.local/bin"
+fi
+
 #suppress failures if my color util is not installed
 type -t color &>/dev/null || color() {
     echo -n ''
